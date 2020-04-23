@@ -1,4 +1,9 @@
-# Gatsby 踩过的那些坑
+---
+layout: post
+title: Gatsby 踩过的那些坑
+date: 2020-04-23
+categories: article
+---
 
 开始之前我们先来了解一下 Gatsby.js 是什么。
 
