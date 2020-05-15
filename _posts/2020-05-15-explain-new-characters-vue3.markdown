@@ -1,14 +1,14 @@
 ---
 layout: post
 title: 解密Vue3.0的新特性
-date: 2020-05-18
+date: 2020-05-15
 categories: article
 ---
 ![](https://p1.ssl.qhimg.com/t01803ad9bd07851fc7.png)
 
 # 前言
 
-尤大大早在2019年10月5日就开放了vue3的源码，时隔半年，于今年的4月17日发布了vue3.0的Beta版本，4月21日B站开直播，对vue3.0做分享总结，这一连串的操作，也算是兢兢业业，大写的优秀了。这篇文章重点来解密一下他在视频里所提及的一些新特性，包括性能方面的大幅度提升，Tree-shaking抖动，Fragments，Teleport，Suspense，自定义渲染API等，其中最重磅的某过于Composition API了，虽然有那么点像React Hooks，但是气质上还是有很多不同的，下面会具体介绍。先附上Beta版源码地址：[https://github.com/vuejs/vue-next#status-beta](https://github.com/vuejs/vue-next#status-beta)，供大家仔细研读。
+尤大大早在2019年10月5日就开放了vue3的源码，时隔半年，于今年的4月17日发布了vue3.0的Beta版本，4月21日B站开直播，对vue3.0做分享总结，这一连串的操作，也算是兢兢业业，大写的优秀了。这篇文章重点来解密一下他在视频里所提及的一些新特性，包括性能方面的大幅度提升，Tree-shaking抖动，Fragments，Teleport，Suspense，自定义渲染API等，其中最重磅的莫过于Composition API了，虽然有那么点像React Hooks，但是气质上还是有很多不同的，下面会具体介绍。先附上Beta版源码地址：[https://github.com/vuejs/vue-next#status-beta](https://github.com/vuejs/vue-next#status-beta)，供大家仔细研读。
 
 # Performance
 
