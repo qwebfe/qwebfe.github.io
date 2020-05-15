@@ -103,6 +103,8 @@ patchflag的用途：
 
 ### 代码
 
+#### html
+
 ```
 <div id="app">
   <span>移动</span>
@@ -114,7 +116,8 @@ patchflag的用途：
 </div>
 ```
 
-编译结果
+#### 编译结果
+
 ```
 import { createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock } from "vue"
 
