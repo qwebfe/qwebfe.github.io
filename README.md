@@ -10,5 +10,5 @@
 
 - [Gatsby 踩过的那些坑](https://qcft.github.io/article/2020/04/23/experience-about-gatsby.html)
 
-- [解密Vue3的那些新特性](https://qcft.github.io/article/2020/05/18/explain-new-characters-vue3.html)
+- [解密Vue3.0的那些新特性](https://qcft.github.io/article/2020/05/18/explain-new-characters-vue3.html)
 
