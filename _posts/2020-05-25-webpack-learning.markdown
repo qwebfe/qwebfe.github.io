@@ -186,13 +186,13 @@ app项目配置插件后，打包index.html时头部会追加remoteEntry.js，�
 
 在生产环境的使用中，对于shared内容通过插件使用，可以使用缓存减少加载时间，但对于exposed的内容，可能需要慎重考虑。
 
-### 参考文件
+### 参考
 
-热更新：https://juejin.im/post/5de0cfe46fb9a071665d3df0
-webpack流程：https://juejin.im/post/5dc01199f265da4d12067ebe
-webpack流程：https://mp.weixin.qq.com/s/LI-SkBoPA94Ply6Qes92PA
-编写loader：https://segmentfault.com/a/1190000012718374
-编写plugin：https://www.webpackjs.com/contribute/writing-a-plugin/
-webpack5.0: https://mp.weixin.qq.com/s/iS-prT1xZPV6cpH7MHRRdQ
-webpack5.0：https://developer.aliyun.com/article/755252
-webpack5.0:  https://juejin.im/post/5e9eb3de6fb9a03c7d3d1647
+- 热更新：https://juejin.im/post/5de0cfe46fb9a071665d3df0
+- webpack流程：https://juejin.im/post/5dc01199f265da4d12067ebe
+- webpack流程：https://mp.weixin.qq.com/s/LI-SkBoPA94Ply6Qes92PA
+- 编写loader：https://segmentfault.com/a/1190000012718374
+- 编写plugin：https://www.webpackjs.com/contribute/writing-a-plugin/
+- webpack5.0: https://mp.weixin.qq.com/s/iS-prT1xZPV6cpH7MHRRdQ
+- webpack5.0：https://developer.aliyun.com/article/755252
+- webpack5.0:  https://juejin.im/post/5e9eb3de6fb9a03c7d3d1647
