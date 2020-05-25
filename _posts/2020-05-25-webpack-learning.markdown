@@ -153,7 +153,7 @@ module.exports = AddScriptPlugin
 
 下图是参考文章中截取，详细流程参见https://juejin.im/post/5de0cfe46fb9a071665d3df0#heading-14
 
-![](https://user-gold-cdn.xitu.io/2019/12/1/16ec13499800dfce?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+![](http://p2.qhimg.com/t0172b886aa2215d864.jpg)
 
 ### 9.webpack5.0中Module Federation的介绍
 
