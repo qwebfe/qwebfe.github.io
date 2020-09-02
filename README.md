@@ -15,3 +15,5 @@
 - [webpack 那些事儿](https://qcft.github.io/article/2020/05/25/webpack-learning.html)
 
 - [git基础原理和使用参考](https://qcft.github.io/article/2020/07/29/git.html)
+
+- [你想 pick 哪款嵌入式 Markdown 编辑器?](https://qcft.github.io/article/2020/09/01/pick-embeddable-markdown-editor.html)
