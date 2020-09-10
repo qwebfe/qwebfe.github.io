@@ -3,6 +3,7 @@ layout: post
 title: 记Mousetarck的一些技术尝试
 date: 2019-08-15
 categories: article
+theme: jekyll-theme-leap-day
 ---
 
 ![mousetrack_img](https://p5.ssl.qhimg.com/t01771478e667255d55.png)
