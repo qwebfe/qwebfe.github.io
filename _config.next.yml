@@ -1,0 +1,208 @@
+
+# ============================================================= #
+# ====================== Scheme Settings ====================== #
+# ============================================================= #
+
+#scheme: Muse
+#scheme: Mist
+#scheme: Pisces
+scheme: Gemini
+
+darkmode: true
+
+
+# ============================================================= #
+# ================= Site Information Settings ================= #
+# ============================================================= #
+
+# creative_commons:
+#   license: by-nc-sa
+#   sidebar: true
+
+
+# ============================================================= #
+# ======================= Menu Settings ======================= #
+# ============================================================= #
+
+menu:
+  home: / || fa fa-home
+  # about: /about/ || fa fa-user
+  tags: /tags/ || fa fa-tags
+  categories: /categories/ || fa fa-th
+  archives: /archives/ || fa fa-archive
+  # schedule: /schedule/ || fa fa-calendar
+  # sitemap: /sitemap.xml || fa fa-sitemap
+  # commonweal: /404/ || fa fa-heartbeat
+
+menu_settings:
+  icons: true
+  badges: true
+
+
+# ============================================================= #
+# ===================== Sidebar Settings ====================== #
+# ============================================================= #
+
+sidebar:
+  position: left
+  display: post
+  padding: 18
+  offset: 12
+
+avatar:
+  url: /images/logo.svg
+  rounded: true
+
+# social:
+  # GitHub: https://github.com/qcft/ || fab fa-github
+  # E-Mail: mailto:support@theme-next.org || fa fa-envelope
+  # RSS: /atom.xml || fa fa-rss
+  # Gitter: https://gitter.im/hexo-next || fab fa-gitter
+
+social_icons:
+  enable: true
+  icons_only: true
+  transition: true
+
+toc:
+  enable: true
+  number: true
+  wrap: true
+
+
+# ============================================================= #
+# ====================== Footer Settings ====================== #
+# ============================================================= #
+
+footer:
+  since: 2014
+  icon:
+    name: fa fa-heart
+    animated: true
+    color: "#808080"
+  copyright: NexT
+  powered: false
+
+
+# ============================================================= #
+# ======================= Post Settings ======================= #
+# ============================================================= #
+
+post_meta:
+  updated_at:
+    enable: false
+
+symbols_count_time:
+  separated_meta: false
+  item_text_total: true
+  item_text_post: true
+
+post_edit:
+  enable: true
+  url: https://github.com/qcft/qcft.github.io/edit/master/source/
+
+
+# ============================================================= #
+# ==================== Misc Theme Settings ==================== #
+# ============================================================= #
+
+mobile_layout_economy: true
+
+codeblock:
+  theme:
+    light: default
+    dark: tomorrow-night
+  copy_button:
+    enable: true
+    style: default
+
+back2top:
+  enable: true
+  sidebar: false
+  scrollpercent: true
+
+# github_banner:
+#   enable: true
+#   permalink: https://github.com/qcft/qcft.github.io
+#   title: Fork NexT on GitHub
+
+
+# ============================================================= #
+# ======================= SEO Settings ======================== #
+# ============================================================= #
+
+index_with_subtitle: true
+
+exturl: true
+
+google_site_verification: 5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0
+
+
+# ============================================================= #
+# =============== Third Party Services Settings =============== #
+# ============================================================= #
+
+math:
+  mathjax:
+    enable: true
+
+pjax: true
+
+mediumzoom: true
+
+
+# ============================================================= #
+# =================== Comments and Widgets ==================== #
+# ============================================================= #
+
+# comments:
+#   lazyload: true
+
+# livere_uid: MTAyMC80NDkyOC8yMTQ1MA==
+
+
+# ============================================================= #
+# ================= Statistics and Analytics ================== #
+# ============================================================= #
+
+# google_analytics:
+#   tracking_id: UA-108155018-3
+
+
+# ============================================================= #
+# ====================== Search Services ====================== #
+# ============================================================= #
+
+local_search:
+  enable: true
+  trigger: auto
+  top_n_per_article: 1
+
+
+# ============================================================= #
+# ======================== Tag Plugins ======================== #
+# ============================================================= #
+
+note:
+  style: simple
+  icons: true
+  light_bg_offset: -3
+
+tabs:
+  transition:
+    tabs: true
+    labels: true
+
+mermaid:
+  enable: true
+
+
+# ============================================================= #
+# ==================== External Libraries ===================== #
+# ============================================================= #
+
+motion:
+  async: true
+
+vendors:
+  internal: jsdelivr
