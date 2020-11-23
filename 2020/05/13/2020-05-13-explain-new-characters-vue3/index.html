@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","scheme":"Gemini","version":"8.0.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="前言尤大大早在2019年10月5日就开放了vue3的源码，时隔半年，于今年的4月17日发布了vue3.0的Beta版本，4月21日B站开直播，对vue3.0做分享总结，这一连串的操作，也算是兢兢业业，大写的优秀了。这篇文章重点来解密一下他在视频里所提及的一些新特性，包括性能方面的大幅度提升，Tree-shaking抖动，Fragments，Teleport，Suspense，自定义渲染API等，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解密Vue3.0的新特性">
+<meta property="og:url" content="https://github.com/qcft/2020/05/13/2020-05-13-explain-new-characters-vue3/index.html">
+<meta property="og:site_name" content="qcft&#39;s Blog">
+<meta property="og:description" content="前言尤大大早在2019年10月5日就开放了vue3的源码，时隔半年，于今年的4月17日发布了vue3.0的Beta版本，4月21日B站开直播，对vue3.0做分享总结，这一连串的操作，也算是兢兢业业，大写的优秀了。这篇文章重点来解密一下他在视频里所提及的一些新特性，包括性能方面的大幅度提升，Tree-shaking抖动，Fragments，Teleport，Suspense，自定义渲染API等，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01803ad9bd07851fc7.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t0154eed47f7ff06ff4.png">
+<meta property="og:image" content="https://p2.ssl.qhimg.com/t01ea41ae7d0a1b93c5.png">
+<meta property="og:image" content="https://p0.ssl.qhimg.com/t01adf14597d4f2bd21.png">
+<meta property="og:image" content="https://p2.ssl.qhimg.com/t01b41cd8e633003da5.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01c66ed230f8a7ef3f.png">
+<meta property="article:published_time" content="2020-05-13T00:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-23T08:58:18.968Z">
+<meta property="article:tag" content="Vue3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1.ssl.qhimg.com/t01803ad9bd07851fc7.png">
+
+
+<link rel="canonical" href="https://github.com/qcft/2020/05/13/2020-05-13-explain-new-characters-vue3/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>解密Vue3.0的新特性 | qcft's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">qcft's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">奇舞团商业化前端组</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Performance"><span class="nav-number">2.</span> <span class="nav-text">Performance</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Virtual-Dom"><span class="nav-number">2.1.</span> <span class="nav-text">Virtual Dom</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.1.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#html"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vue2%E7%9A%84%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">vue2的编译结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vue3%E7%9A%84%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C"><span class="nav-number">2.1.1.3.</span> <span class="nav-text">vue3的编译结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#patchflag%E6%A0%87%E8%AE%B0"><span class="nav-number">2.1.2.</span> <span class="nav-text">patchflag标记</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%8F%90%E5%8D%87"><span class="nav-number">2.2.</span> <span class="nav-text">静态提升</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#html-1"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">编译结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E7%BC%93%E5%AD%98cacheHandlers"><span class="nav-number">2.3.</span> <span class="nav-text">事件监听缓存cacheHandlers</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#html-2"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%90%AFcacheHandlers"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">开启cacheHandlers</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%ADcacheHandlers"><span class="nav-number">2.3.1.3.</span> <span class="nav-text">关闭cacheHandlers</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSR"><span class="nav-number">2.4.</span> <span class="nav-text">SSR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="nav-number">2.4.1.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#html-3"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C-1"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">编译结果</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tree-shaking"><span class="nav-number">3.</span> <span class="nav-text">Tree-shaking</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-4"><span class="nav-number">3.0.1.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#html-4"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E7%BB%93%E6%9E%9C-2"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">编译结果</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Composition-API"><span class="nav-number">4.</span> <span class="nav-text">Composition API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mixin"><span class="nav-number">4.1.</span> <span class="nav-text">Mixin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scoped-Slots"><span class="nav-number">4.2.</span> <span class="nav-text">Scoped Slots</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Composition-Functions"><span class="nav-number">4.3.</span> <span class="nav-text">Composition Functions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.3.1.</span> <span class="nav-text">组件中的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Fragments"><span class="nav-number">5.</span> <span class="nav-text">Fragments</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Teleport"><span class="nav-number">6.</span> <span class="nav-text">Teleport</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Suspense"><span class="nav-number">7.</span> <span class="nav-text">Suspense</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%B3%95"><span class="nav-number">7.0.1.</span> <span class="nav-text">用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">7.0.2.</span> <span class="nav-text">代码示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Custom-Renderer-API"><span class="nav-number">8.</span> <span class="nav-text">Custom Renderer API</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9B%B4%E5%A5%BD%E7%9A%84TypeScript%E6%94%AF%E6%8C%81"><span class="nav-number">9.</span> <span class="nav-text">更好的TypeScript支持</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">10.</span> <span class="nav-text">结语</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt=""
+      src="/images/logo.svg">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">Stay hungry, Stay foolish</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/05/13/2020-05-13-explain-new-characters-vue3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          解密Vue3.0的新特性<a href="https://github.com/qcft/qcft.github.io/edit/master/source/_posts/2020-05-13-explain-new-characters-vue3.markdown" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-13 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-13T00:00:00+00:00">2020-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>13k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://p1.ssl.qhimg.com/t01803ad9bd07851fc7.png"></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>尤大大早在2019年10月5日就开放了vue3的源码，时隔半年，于今年的4月17日发布了vue3.0的Beta版本，4月21日B站开直播，对vue3.0做分享总结，这一连串的操作，也算是兢兢业业，大写的优秀了。这篇文章重点来解密一下他在视频里所提及的一些新特性，包括性能方面的大幅度提升，Tree-shaking抖动，Fragments，Teleport，Suspense，自定义渲染API等，其中最重磅的莫过于Composition API了，虽然有那么点像React Hooks，但是气质上还是有很多不同的，下面会具体介绍。先附上Beta版源码地址：<a href="https://github.com/vuejs/vue-next#status-beta">https://github.com/vuejs/vue-next#status-beta</a>，供大家仔细研读。</p>
+<h1 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h1><h2 id="Virtual-Dom"><a href="#Virtual-Dom" class="headerlink" title="Virtual Dom"></a>Virtual Dom</h2><p>相信使用过前端框架React的人，对虚拟Dom应该很熟悉了。它的核心思想就是抽象原生Dom，封装对应操作的API。其中的Diff算法算是核心难点。vue3.0这次优化主要就是在Diff算法上下了很多功夫。它是怎么来实现的呢？主要通过<code>patchflag</code>来标记不同类型的数据，来实现动态数据的动态更新，区分静态数据，这样只会在最开始的时候加载一次，后续编译过程中均直接略过，从而达到提升渲染速度的目的。效果是，upadate的性能提升了1.3~2倍，开启ssr的情况下可以提升2~3倍，所以在性能方面的提升还是很可观的。我们来看下一个代码示例：</p>
+<a id="more"></a>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><h4 id="html"><a href="#html" class="headerlink" title="html"></a>html</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">  &lt;span&gt;&#123;&#123; vue3 &#125;&#125;&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="vue2的编译结果"><a href="#vue2的编译结果" class="headerlink" title="vue2的编译结果"></a>vue2的编译结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function anonymous() &#123;</span><br><span class="line">  with(this) &#123;</span><br><span class="line">    return _c(&#39;div&#39;, &#123;</span><br><span class="line">      attrs: &#123;</span><br><span class="line">        &quot;id&quot;: &quot;app&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;, [_ssrNode(&quot;&lt;span&gt;&quot; + _ssrEscape(_s(vue3)) +</span><br><span class="line">      &quot;&lt;&#x2F;span&gt; &lt;span&gt;vue&lt;&#x2F;span&gt;&quot;)])</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每次vue3值变化的时候，所有的节点都会重新创建，显然性能是额外损耗的。</p>
+<h4 id="vue3的编译结果"><a href="#vue3的编译结果" class="headerlink" title="vue3的编译结果"></a>vue3的编译结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import &#123; toDisplayString as _toDisplayString, createVNode as _createVNode, openBlock as _openBlock, createBlock as _createBlock &#125; from &quot;vue&quot;</span><br><span class="line"></span><br><span class="line">const _hoisted_1 &#x3D; &#123; id: &quot;app&quot; &#125;</span><br><span class="line">const _hoisted_2 &#x3D; &#x2F;*#__PURE__*&#x2F;_createVNode(&quot;span&quot;, null, &quot;vue&quot;, -1 &#x2F;* HOISTED *&#x2F;)</span><br><span class="line"></span><br><span class="line">export function render(_ctx, _cache) &#123;</span><br><span class="line">  return (_openBlock(), _createBlock(&quot;div&quot;, _hoisted_1, [</span><br><span class="line">    _createVNode(&quot;span&quot;, null, _toDisplayString(_ctx.vue3), 1 &#x2F;* TEXT *&#x2F;),</span><br><span class="line">    _hoisted_2</span><br><span class="line">  ]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们注意到，vue3的动态节点，被标记了1，这个数字就是<code>patchflag</code>值，这里表示text类型。它的作用，主要是在之后的动态更新过程中，判断当前Dom节点是否有此标记，如果有，就update该节点，如果没有，就忽略不更新。如此，就能把性能损耗降到最低。尤其是在拥有大量静态节点的Dom结构里，性能提升会更显著。</p>
+<h3 id="patchflag标记"><a href="#patchflag标记" class="headerlink" title="patchflag标记"></a>patchflag标记</h3><p>patchflag的值有很多，我们常用到的有text、props，组合类型和事件监听等。下面是代码里列举的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 这里注释仅供参考。</span><br><span class="line">export const enum PatchFlags &#123;</span><br><span class="line">  TEXT &#x3D; 1,&#x2F;&#x2F; 表示具有动态textContent的元素</span><br><span class="line">  CLASS &#x3D; 1 &lt;&lt; 1,  &#x2F;&#x2F; 表示有动态Class的元素</span><br><span class="line">  STYLE &#x3D; 1 &lt;&lt; 2,  &#x2F;&#x2F; 表示动态样式（静态如style&#x3D;&quot;color: red&quot;，也会提升至动态）</span><br><span class="line">  PROPS &#x3D; 1 &lt;&lt; 3,  &#x2F;&#x2F; 表示具有非类&#x2F;样式动态道具的元素。</span><br><span class="line">  FULL_PROPS &#x3D; 1 &lt;&lt; 4,  &#x2F;&#x2F; 表示带有动态键的道具的元素，与上面三种相斥</span><br><span class="line">  HYDRATE_EVENTS &#x3D; 1 &lt;&lt; 5,  &#x2F;&#x2F; 表示带有事件监听器的元素</span><br><span class="line">  STABLE_FRAGMENT &#x3D; 1 &lt;&lt; 6,   &#x2F;&#x2F; 表示其子顺序不变的片段（没懂）。 </span><br><span class="line">  KEYED_FRAGMENT &#x3D; 1 &lt;&lt; 7, &#x2F;&#x2F; 表示带有键控或部分键控子元素的片段。</span><br><span class="line">  UNKEYED_FRAGMENT &#x3D; 1 &lt;&lt; 8, &#x2F;&#x2F; 表示带有无key绑定的片段</span><br><span class="line">  NEED_PATCH &#x3D; 1 &lt;&lt; 9,   &#x2F;&#x2F; 表示只需要非属性补丁的元素，例如ref或hooks</span><br><span class="line">  DYNAMIC_SLOTS &#x3D; 1 &lt;&lt; 10,  &#x2F;&#x2F; 表示具有动态插槽的元素</span><br><span class="line">  &#x2F;&#x2F; 特殊 FLAGS -------------------------------------------------------------</span><br><span class="line">  HOISTED &#x3D; -1,  &#x2F;&#x2F; 特殊标志是负整数表示永远不会用作diff,只需检查 patchFlag &#x3D;&#x3D;&#x3D; FLAG.</span><br><span class="line">  BAIL &#x3D; -2 &#x2F;&#x2F; 一个特殊的标志，指代差异算法（没懂）</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>patchflag的用途：</p>
+<ol>
+<li>用来标记当前节点需要更新，静态节点没有这个参数，更新的时候直接略过</li>
+<li>组合更新，比如：1-只更新显示文本，8-只更新属性，9-更新显示文本和属性</li>
+</ol>
+<p>在每次Dom更新的时候，只更新带有<code>patchflag</code>值的节点，没有的直接略过。而且，无论Dom节点层级有多深，都同样适用。这样更新只用关注变化的内容，而不用再去关心那些静态数据。这么做节省了更多的内存，提升更新渲染的速度。是不是很实用。</p>
+<p>其中值得提的一点，叫组合patchflag值。这种类型使用的是位运算的原理。举个例子说明一下：</p>
+<p><img src="https://p1.ssl.qhimg.com/t0154eed47f7ff06ff4.png"></p>
+<p>图中，我们可以看到文本和属性的组合值，在按位与之后，就得到了patchflag值为9。其他同理，不做赘述。</p>
+<h2 id="静态提升"><a href="#静态提升" class="headerlink" title="静态提升"></a>静态提升</h2><h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><h4 id="html-1"><a href="#html-1" class="headerlink" title="html"></a>html</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">  &lt;span&gt;移动&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;端&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;流量&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;入口&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;&#123;&#123; vue3 &#125;&#125;&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;5G&lt;&#x2F;span&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译结果"><a href="#编译结果" class="headerlink" title="编译结果"></a>编译结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import &#123; createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock &#125; from &quot;vue&quot;</span><br><span class="line"></span><br><span class="line">const _hoisted_1 &#x3D; &#123; id: &quot;app&quot; &#125;</span><br><span class="line">const _hoisted_2 &#x3D; &#x2F;*#__PURE__*&#x2F;_createVNode(&quot;span&quot;, null, &quot;移动&quot;, -1 &#x2F;* HOISTED *&#x2F;)</span><br><span class="line">const _hoisted_3 &#x3D; &#x2F;*#__PURE__*&#x2F;_createVNode(&quot;span&quot;, null, &quot;端&quot;, -1 &#x2F;* HOISTED *&#x2F;)</span><br><span class="line">const _hoisted_4 &#x3D; &#x2F;*#__PURE__*&#x2F;_createVNode(&quot;span&quot;, null, &quot;流量&quot;, -1 &#x2F;* HOISTED *&#x2F;)</span><br><span class="line">const _hoisted_5 &#x3D; &#x2F;*#__PURE__*&#x2F;_createVNode(&quot;span&quot;, null, &quot;入口&quot;, -1 &#x2F;* HOISTED *&#x2F;)</span><br><span class="line">const _hoisted_6 &#x3D; &#x2F;*#__PURE__*&#x2F;_createVNode(&quot;span&quot;, null, &quot;5G&quot;, -1 &#x2F;* HOISTED *&#x2F;)</span><br><span class="line"></span><br><span class="line">export function render(_ctx, _cache) &#123;</span><br><span class="line">  return (_openBlock(), _createBlock(&quot;div&quot;, _hoisted_1, [</span><br><span class="line">    _hoisted_2,</span><br><span class="line">    _hoisted_3,</span><br><span class="line">    _hoisted_4,</span><br><span class="line">    _hoisted_5,</span><br><span class="line">    _createVNode(&quot;span&quot;, null, _toDisplayString(_ctx.vue3), 1 &#x2F;* TEXT *&#x2F;),</span><br><span class="line">    _hoisted_6</span><br><span class="line">  ]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们看到所有的静态节点都被拿到了渲染函数之外，这样做的好处就是，静态节点只用被创建一次，在以后的渲染的时候拿来复用就行。可以极大的优化大型项目的内存占用，不用每次渲染都要重新创建。</p>
+<h2 id="事件监听缓存cacheHandlers"><a href="#事件监听缓存cacheHandlers" class="headerlink" title="事件监听缓存cacheHandlers"></a>事件监听缓存cacheHandlers</h2><p>我们知道在vue2中，针对节点绑定的事件，每次触发都要重新生成全新的function去更新，而React目前也没有去缓存事件，具体为什么不去做，不得而知。在vue3中，就做了这么一件事情。当cacheHandlers开启的时候，编译会自动生成一个内联函数，将其变成一个静态节点，相当于React中的useCallback。并且本身就支持手写内联函数，这点就比较方便。我们来看下代码示例：</p>
+<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><h4 id="html-2"><a href="#html-2" class="headerlink" title="html"></a>html</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">  &lt;button @click&#x3D;&quot;confirmHandler&quot;&gt;确认&lt;&#x2F;button&gt;</span><br><span class="line">  &lt;span&gt;&#123;&#123; vue3 &#125;&#125;&lt;&#x2F;span&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="开启cacheHandlers"><a href="#开启cacheHandlers" class="headerlink" title="开启cacheHandlers"></a>开启cacheHandlers</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import &#123; createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock &#125; from &quot;vue&quot;</span><br><span class="line"></span><br><span class="line">const _hoisted_1 &#x3D; &#123; id: &quot;app&quot; &#125;</span><br><span class="line"></span><br><span class="line">export function render(_ctx, _cache) &#123;</span><br><span class="line">  return (_openBlock(), _createBlock(&quot;div&quot;, _hoisted_1, [</span><br><span class="line">    _createVNode(&quot;button&quot;, &#123;</span><br><span class="line">      onClick: _cache[1] || (_cache[1] &#x3D; $event &#x3D;&gt; (_ctx.confirmHandler($event)))</span><br><span class="line">    &#125;, &quot;确认&quot;),</span><br><span class="line">    _createVNode(&quot;span&quot;, null, _toDisplayString(_ctx.vue3), 1 &#x2F;* TEXT *&#x2F;)</span><br><span class="line">  ]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="关闭cacheHandlers"><a href="#关闭cacheHandlers" class="headerlink" title="关闭cacheHandlers"></a>关闭cacheHandlers</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import &#123; createVNode as _createVNode, toDisplayString as _toDisplayString, openBlock as _openBlock, createBlock as _createBlock &#125; from &quot;vue&quot;</span><br><span class="line"></span><br><span class="line">const _hoisted_1 &#x3D; &#123; id: &quot;app&quot; &#125;</span><br><span class="line"></span><br><span class="line">export function render(_ctx, _cache) &#123;</span><br><span class="line">  return (_openBlock(), _createBlock(&quot;div&quot;, _hoisted_1, [</span><br><span class="line">    _createVNode(&quot;button&quot;, &#123; onClick: _ctx.confirmHandler &#125;, &quot;确认&quot;, 8 &#x2F;* PROPS *&#x2F;, [&quot;onClick&quot;]),</span><br><span class="line">    _createVNode(&quot;span&quot;, null, _toDisplayString(_ctx.vue3), 1 &#x2F;* TEXT *&#x2F;)</span><br><span class="line">  ]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以很清楚的看到其中的差别，开启cacheHandlers事件缓存之后，生成内联函数_cache，这样每次就不用重复渲染了，在事件更新频繁或者绑定事件过多的情况下，性能优化非常显著。</p>
+<h2 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a>SSR</h2><p>这个原理其实很简单，就是把所有的静态内容编译成一个字符串push到一个buffer里。</p>
+<h3 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h3><h4 id="html-3"><a href="#html-3" class="headerlink" title="html"></a>html</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">  &lt;button @click&#x3D;&quot;confirmHandler&quot;&gt;确认&lt;&#x2F;button&gt;</span><br><span class="line">  &lt;span&gt;&#123;&#123; vue3 &#125;&#125;&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;span&gt;vue&lt;&#x2F;span&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译结果-1"><a href="#编译结果-1" class="headerlink" title="编译结果"></a>编译结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import &#123; ssrInterpolate as _ssrInterpolate &#125; from &quot;@vue&#x2F;server-renderer&quot;</span><br><span class="line"></span><br><span class="line">export function ssrRender(_ctx, _push, _parent) &#123;</span><br><span class="line">  _push(&#96;&lt;div id&#x3D;&quot;app&quot;&gt;&lt;button&gt;确认&lt;&#x2F;button&gt;&lt;span&gt;$&#123;_ssrInterpolate(_ctx.vue3)&#125;&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;span&gt;vue&lt;&#x2F;span&gt;&lt;&#x2F;div&gt;&#96;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>是不是很神奇，我们看到所有的静态节点span全部被编译成了一个字符串，甚至里面的动态节点也被尽可能的字符化。这样做至少可以节省一半以上内存，总体渲染速度加快一倍以上。SSR服务端渲染在性能上，比单纯的抽成Virtual Dom去渲染，快的不是一个量级，两者完全不在一个层面上。</p>
+<p>这里要注意一点的是，如果静态节点数量很多，超过了一个阈值，vue3会单独创建一个div，将静态节点innerHTML到该div里去。</p>
+<h1 id="Tree-shaking"><a href="#Tree-shaking" class="headerlink" title="Tree-shaking"></a>Tree-shaking</h1><p>这里有很多解释，我更偏向于理解成，把没用的树叶”抖掉“这个比喻。</p>
+<p>换句话说，就是按需引入我们需要的模块。对于用不到的模块就不会打包。</p>
+<h3 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h3><h4 id="html-4"><a href="#html-4" class="headerlink" title="html"></a>html</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">  &lt;input type&#x3D;&quot;checkbox&quot; v-model&#x3D;&quot;vue3&quot; &#x2F;&gt;</span><br><span class="line">&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编译结果-2"><a href="#编译结果-2" class="headerlink" title="编译结果"></a>编译结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">import &#123; vModelCheckbox as _vModelCheckbox, createVNode as _createVNode, withDirectives as _withDirectives, openBlock as _openBlock, createBlock as _createBlock &#125; from &quot;vue&quot;</span><br><span class="line"></span><br><span class="line">const _hoisted_1 &#x3D; &#123; id: &quot;app&quot; &#125;</span><br><span class="line"></span><br><span class="line">export function render(_ctx, _cache) &#123;</span><br><span class="line">  return (_openBlock(), _createBlock(&quot;div&quot;, _hoisted_1, [</span><br><span class="line">    _withDirectives(_createVNode(&quot;input&quot;, &#123;</span><br><span class="line">      type: &quot;checkbox&quot;,</span><br><span class="line">      &quot;onUpdate:modelValue&quot;: $event &#x3D;&gt; (_ctx.vue3 &#x3D; $event)</span><br><span class="line">    &#125;, null, 8 &#x2F;* PROPS *&#x2F;, [&quot;onUpdate:modelValue&quot;]), [</span><br><span class="line">      [_vModelCheckbox, _ctx.vue3]</span><br><span class="line">    ])</span><br><span class="line">  ]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里在编译阶段，仅仅引入了vModelCheckbox一个Dom相关模块，其他模块都是通用的必须要引入的。这样打出的包会体积更小，速度更快，性能更好。这一点在vue2里是没有做区分的。</p>
+<h1 id="Composition-API"><a href="#Composition-API" class="headerlink" title="Composition API"></a>Composition API</h1><p>终于到了vue3.0版本里最重磅的内容。与React Hooks类似，只是实现方式，整体气质不同。</p>
+<p>拥有以下特性</p>
+<ul>
+<li>兼容现有的Options API，无缝衔接</li>
+<li>更加灵活，组合更方便，复用性更强</li>
+<li>可以跟其他框架搭配使用</li>
+</ul>
+<p>我们知道，vue3采用RFC来讨论所有的API的实现，并且把所有讨论的细节都呈现给使用者，我觉得这点是非常棒的事情。可以更友好的让开发者理解和学习API的使用，附上文档学习地址：<span class="exturl" data-url="aHR0cHM6Ly9jb21wb3NpdGlvbi1hcGkudnVlanMub3JnLyNzdW1tYXJ5">https://composition-api.vuejs.org/#summary<i class="fa fa-external-link-alt"></i></span>。</p>
+<p>那么，为什么vue3必须要有Composition API这样的东西呢？下面我们看下几个场景，你就能理解Composition API的强大了。</p>
+<h2 id="Mixin"><a href="#Mixin" class="headerlink" title="Mixin"></a>Mixin</h2><p><img src="https://p2.ssl.qhimg.com/t01ea41ae7d0a1b93c5.png"></p>
+<p>图中我们可以看到在解决API复用上，Mixin是可以达到的。但是它最要命的就是命名空间冲突的问题，这个缺陷可以导致代码的不可维护，这点对于开发者是不能接受的，甚至毁灭性的。</p>
+<h2 id="Scoped-Slots"><a href="#Scoped-Slots" class="headerlink" title="Scoped Slots"></a>Scoped Slots</h2><p><img src="https://p0.ssl.qhimg.com/t01adf14597d4f2bd21.png"></p>
+<p>Scoped Slots虽然可以解决Mixin的问题，但是它的问题就是配置太多，逻辑也太多，这样就导致它的复用性和灵活性极差，还不如Mixin。</p>
+<p>最后，我们来看看Composition API是怎么实现的。</p>
+<h2 id="Composition-Functions"><a href="#Composition-Functions" class="headerlink" title="Composition Functions"></a>Composition Functions</h2><p><img src="https://p2.ssl.qhimg.com/t01b41cd8e633003da5.png"></p>
+<p>是不是很棒，使用了我们熟悉的函数式编程，结构非常清晰，代码量也减少了很多，最重要的是灵活性和复用性很友好。也不用担心会命名冲突的问题。</p>
+<h3 id="组件中的使用"><a href="#组件中的使用" class="headerlink" title="组件中的使用"></a>组件中的使用</h3><p><img src="https://p1.ssl.qhimg.com/t01c66ed230f8a7ef3f.png"></p>
+<p>图中不同颜色代表不同逻辑的业务代码，相同颜色表示同一业务需要的代码。我们在写一个比较复杂的组件的时候，有没有这种体会。组件里面包含很多个小的功能组件，这些功能可能在其他页面也有用到，但是数据强依赖这个组件的接口。所以只能分开，单独写到这个组件里，导致组件代码又臭又长，还没法复用。遇到这种情况，我们也只能望洋兴叹。在vue3.0出来之后，我们就可以完美的解决这种问题。我们可以任意在同一组件里，写不同的业务逻辑，不仅层次分明，逻辑清楚，而且神奇的是，你可以信手拈来，拿去复用在其他组件里。你可能也不再需要为了一个页面，去封装十几个小组件了。费神费力，还容易出错。</p>
+<p>使用Composition API写出的代码，后期筛查问题、维护和update上，体验也是极度舒适的。</p>
+<p>当然，我们不用担心之前的Options API不能用，vue3做了兼容，可以一起使用的。建议有了它就不要再考虑使用其他方案了。</p>
+<p>具体使用方法可以查看文档：<span class="exturl" data-url="aHR0cHM6Ly9jb21wb3NpdGlvbi1hcGkudnVlanMub3JnLyNzdW1tYXJ5">https://composition-api.vuejs.org/#summary<i class="fa fa-external-link-alt"></i></span></p>
+<h1 id="Fragments"><a href="#Fragments" class="headerlink" title="Fragments"></a>Fragments</h1><p>碎片，这个我理解是不再限制组件中必须提供根节点。你可以这么写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;div&gt;vue3&lt;&#x2F;div&gt;</span><br><span class="line">text</span><br></pre></td></tr></table></figure>
+
+<p>也可以这么写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue3</span><br></pre></td></tr></table></figure>
+
+<p>其实看编译的代码，你会发现，vue3只是帮你生成了一个根节点来包裹。这么做的好处就是你省事了，腾出手来做你喜欢做的，vue3就像你的爱人一样，默默地帮你做了许多。</p>
+<h1 id="Teleport"><a href="#Teleport" class="headerlink" title="Teleport"></a>Teleport</h1><p>这个特性，我理解相当于”占位“。看下代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 占位，专门用来显示定制内容 --&gt;</span><br><span class="line">&lt;div id&#x3D;&quot;modal-container&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 父页面 --&gt;</span><br><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    &lt;!-- 调用Teleport --&gt;</span><br><span class="line">    &lt;Teleport to&#x3D;&quot;#modal-container&quot;&gt;</span><br><span class="line">        &lt;div v-show&#x3D;&quot;isPopUpOpen&quot;&gt;</span><br><span class="line">          &lt;p&gt;确定删除？&lt;&#x2F;p&gt;</span><br><span class="line">          &lt;button @click&#x3D;&quot;removeUser&quot;&gt;确定&lt;&#x2F;button&gt;</span><br><span class="line">          &lt;button @click&#x3D;&quot;isPopUpOpen &#x3D; false&quot;&gt;取消&lt;&#x2F;button&gt;</span><br><span class="line">        &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;&#x2F;Teleport&gt;</span><br><span class="line">    </span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里，id是modal-container的模块会在根页面里占位，在调用的时候插入<Teleport></Teleport>模块。这么做可以避免由于z-index层级问题导致的显示异常。</p>
+<p>我认为这个特性不仅仅这么简单，其他应用场景有待挖掘。</p>
+<h1 id="Suspense"><a href="#Suspense" class="headerlink" title="Suspense"></a>Suspense</h1><p>翻译为，”悬念“。我理解就是异步加载依赖。</p>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><ul>
+<li>可在嵌套层级中等待嵌套的异步依赖项</li>
+<li>支持 async setup()</li>
+<li>支持异步组件</li>
+</ul>
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; vue2实现</span><br><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">        &lt;div v-if&#x3D;&quot;!loading&quot;&gt;</span><br><span class="line">            ...</span><br><span class="line">        &lt;&#x2F;div&gt;</span><br><span class="line">        &lt;div v-if&#x3D;&quot;loading&quot;&gt;Loading...&lt;&#x2F;div&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; vue3实现</span><br><span class="line">&lt;Suspense&gt;</span><br><span class="line">  &lt;template&gt;</span><br><span class="line">    &lt;Suspended-component &#x2F;&gt;</span><br><span class="line">  &lt;&#x2F;template&gt;</span><br><span class="line">  &lt;template #fallback&gt;</span><br><span class="line">    Loading...</span><br><span class="line">  &lt;&#x2F;template&gt;</span><br><span class="line">&lt;&#x2F;Suspense&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里实现一个过渡效果，使用Suspense实现，更简单直接一些。</p>
+<p>这个特性的应用场景，也可能是图片或者模块的顺序加载。对于业务逻辑比较复杂，需要异步加载静态节点的时候，可以考虑使用。</p>
+<h1 id="Custom-Renderer-API"><a href="#Custom-Renderer-API" class="headerlink" title="Custom Renderer API"></a>Custom Renderer API</h1><p>自定义渲染API这块，意味着以后我们可以通过 vue ，实现用 dom 编程的方式来进行 webgl 编程。</p>
+<p>其他的一些变化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 周期函数变化</span><br><span class="line"></span><br><span class="line">被替换</span><br><span class="line"></span><br><span class="line">beforeCreate -&gt; setup()</span><br><span class="line">created -&gt; setup()</span><br><span class="line"></span><br><span class="line">重命名</span><br><span class="line"></span><br><span class="line">beforeMount -&gt; onBeforeMount</span><br><span class="line">mounted -&gt; onMounted</span><br><span class="line">beforeUpdate -&gt; onBeforeUpdate</span><br><span class="line">updated -&gt; onUpdated</span><br><span class="line">beforeDestroy -&gt; onBeforeUnmount</span><br><span class="line">destroyed -&gt; onUnmounted</span><br><span class="line">errorCaptured -&gt; onErrorCaptured</span><br><span class="line"></span><br><span class="line">新增的</span><br><span class="line"></span><br><span class="line">新增的以下2个方便调试 debug 的回调钩子：</span><br><span class="line"></span><br><span class="line">onRenderTracked</span><br><span class="line">onRenderTriggered</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 对应的自定义指令变化</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; vue2</span><br><span class="line">const MyDirective &#x3D; &#123;</span><br><span class="line">  bind(el, binding, vnode, prevVnode) &#123;&#125;,</span><br><span class="line">  inserted() &#123;&#125;,</span><br><span class="line">  update() &#123;&#125;,</span><br><span class="line">  componentUpdated() &#123;&#125;,</span><br><span class="line">  unbind() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; vue3</span><br><span class="line">const MyDirective &#x3D; &#123;</span><br><span class="line">  beforeMount(el, binding, vnode, prevVnode) &#123;&#125;,</span><br><span class="line">  mounted() &#123;&#125;,</span><br><span class="line">  beforeUpdate() &#123;&#125;,</span><br><span class="line">  updated() &#123;&#125;,</span><br><span class="line">  beforeUnmount() &#123;&#125;, &#x2F;&#x2F; new</span><br><span class="line">  unmounted() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="更好的TypeScript支持"><a href="#更好的TypeScript支持" class="headerlink" title="更好的TypeScript支持"></a>更好的TypeScript支持</h1><p>vue3.0版本里，采用了TypeScript重写，意味着之后会全面拥抱TypeScript。类型提示、检测都更加的友好强大。废弃了Class，如果你还是喜欢Class的用法，可以安装单独库vue-class-component支持。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>以上对vue3主要的新特性做了简单的总结，也加入了一些个人的理解，目前还不能放手使用，只能算尝鲜阶段，所以如果想更深入了解，要仔细研读下vue3的源码。尤大大在直播问答环节，表示可能需要年终才会发布正式版本，所以还有一段时间来完善框架，让vue3更饱满的呈现给众人。后续还需要做的工作主要包括，文档编写，完善开发者工具，以及自动化迁移工具等。有大量的工作要做，是为了给vue2升级vue3做准备。尤大大在直播中也提及，未来会有一个过渡版本发布，这也是最后一个vue2版本vue2.7，计划在不损坏兼容性的前提下，加入一些好的vue3的功能，把它们提前合并入2.7版本，提供给开发者使用体验。而在这之后18个月，表示只会进行安全性的描述，不在继续维护。</p>
+<p>而关于vue2升级到vue3，作者也友情提示大家，对于业务逻辑偏重的项目，请一定酌情考虑升级，自觉规避风险，言下之意就是说在全面拥抱vue3之前，可能你需要做一些取舍。</p>
+<p>最后，我猜想，Composition API是有极大可能提前加入到2.7版本，提前让大家体验，那就让我们敬请期待吧。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vue3/" rel="tag"># Vue3</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/23/2020-04-23-experience-about-gatsby/" rel="prev" title="Gatsby 踩过的那些坑">
+                  <i class="fa fa-chevron-left"></i> Gatsby 踩过的那些坑
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/25/2020-05-25-webpack-learning/" rel="next" title="webpack 那些事儿">
+                  webpack 那些事儿 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NexT</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">47k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">43 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.8.2/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+
+    </div>
+</body>
+</html>

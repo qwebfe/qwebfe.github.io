@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","scheme":"Gemini","version":"8.0.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="本文作者：韩永刚，360奇舞团 WEB前端开发高级工程师。  本文将简单介绍一下持续集成的概念，并手把手带你在你的微信小程序项目中完成属于你的持续集成方案。 什么是前端工程化所有能降低成本，并且能提高效率的事情总称为工程化。在前端项目中能够减少重复工作、扩展 javascript\html\css 本身的语言能力、解决功能复用和变更问题、解决开发和产品环境差异问题、任何时间任何地点生成可部署的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信小程序工程化之持续集成方案">
+<meta property="og:url" content="https://github.com/qcft/2019/10/31/2019-10-31-wechat-ci/index.html">
+<meta property="og:site_name" content="qcft&#39;s Blog">
+<meta property="og:description" content="本文作者：韩永刚，360奇舞团 WEB前端开发高级工程师。  本文将简单介绍一下持续集成的概念，并手把手带你在你的微信小程序项目中完成属于你的持续集成方案。 什么是前端工程化所有能降低成本，并且能提高效率的事情总称为工程化。在前端项目中能够减少重复工作、扩展 javascript\html\css 本身的语言能力、解决功能复用和变更问题、解决开发和产品环境差异问题、任何时间任何地点生成可部署的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t0166864b2322539b1d.jpg">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t015868f4a26eb1c187.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01365dad71b81d349e.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01ee74b28ae33622a9.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t0129f4e0808e3a95fd.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01a639e59da0c1654b.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t015159defb543bc007.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t019d51361cb922a675.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01f0ac08aa114bca76.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t011ca19b9ff40db6dc.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01a2d503871bbc77ad.png">
+<meta property="article:published_time" content="2019-10-31T00:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-23T08:58:18.968Z">
+<meta property="article:tag" content="持续集成">
+<meta property="article:tag" content="微信小程序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1.ssl.qhimg.com/t0166864b2322539b1d.jpg">
+
+
+<link rel="canonical" href="https://github.com/qcft/2019/10/31/2019-10-31-wechat-ci/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>微信小程序工程化之持续集成方案 | qcft's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">qcft's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">奇舞团商业化前端组</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">什么是前端工程化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">什么是持续集成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Web%E9%A1%B9%E7%9B%AE%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%80%8E%E4%B9%88%E5%81%9A"><span class="nav-number">3.</span> <span class="nav-text">Web项目持续集成怎么做</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E4%BD%A0%E5%AE%8C%E6%88%90%E5%B0%8F%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E6%96%B9%E6%A1%88"><span class="nav-number">4.</span> <span class="nav-text">手把手教你完成小程序的持续集成方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">4.1.</span> <span class="nav-text">1. 准备工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85%E5%BF%85%E8%A6%81%E8%BD%AF%E4%BB%B6"><span class="nav-number">4.2.</span> <span class="nav-text">2. 安装必要软件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AEgitlab-runner"><span class="nav-number">4.3.</span> <span class="nav-text">3. 配置gitlab-runner</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BF%AE%E6%94%B9gitlab-runner%E6%9C%8D%E5%8A%A1%E7%9A%84%E7%99%BB%E5%BD%95%E8%B4%A6%E5%8F%B7"><span class="nav-number">4.4.</span> <span class="nav-text">4. 修改gitlab-runner服务的登录账号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E9%85%8D%E7%BD%AE%E5%BE%AE%E4%BF%A1%E5%BC%80%E5%8F%91%E8%80%85%E5%B7%A5%E5%85%B7"><span class="nav-number">4.5.</span> <span class="nav-text">5. 配置微信开发者工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E9%85%8D%E7%BD%AE-gitlab-ci-yml"><span class="nav-number">4.6.</span> <span class="nav-text">6. 配置.gitlab-ci.yml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E9%A1%B9%E7%9B%AE%E6%96%B9%E6%A1%88"><span class="nav-number">4.7.</span> <span class="nav-text">7. 持续集成项目方案</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">相关资料</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt=""
+      src="/images/logo.svg">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">Stay hungry, Stay foolish</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/10/31/2019-10-31-wechat-ci/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微信小程序工程化之持续集成方案<a href="https://github.com/qcft/qcft.github.io/edit/master/source/_posts/2019-10-31-wechat-ci.markdown" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-31 00:00:00" itemprop="dateCreated datePublished" datetime="2019-10-31T00:00:00+00:00">2019-10-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://p1.ssl.qhimg.com/t0166864b2322539b1d.jpg"></p>
+<blockquote>
+<p>本文作者：韩永刚，360奇舞团 WEB前端开发高级工程师。</p>
+</blockquote>
+<p>本文将简单介绍一下持续集成的概念，并手把手带你在你的微信小程序项目中完成属于你的持续集成方案。</p>
+<h1 id="什么是前端工程化"><a href="#什么是前端工程化" class="headerlink" title="什么是前端工程化"></a>什么是前端工程化</h1><p>所有能降低成本，并且能提高效率的事情总称为工程化。在前端项目中能够减少重复工作、扩展 javascript\html\css 本身的语言能力、解决功能复用和变更问题、解决开发和产品环境差异问题、任何时间任何地点生成可部署的软件、解决发布流程问题，都属于前端工程化。</p>
+<h1 id="什么是持续集成"><a href="#什么是持续集成" class="headerlink" title="什么是持续集成"></a>什么是持续集成</h1><p>持续集成是前端工程化中的一部分，是一种软件开发实践，即团队开发成员经常集成他们的工作，通常每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括自动化编译，自动化测试，自动化发布）来验证项目代码，从而尽早地发现错误。</p>
+<a id="more"></a>
+<h1 id="Web项目持续集成怎么做"><a href="#Web项目持续集成怎么做" class="headerlink" title="Web项目持续集成怎么做"></a>Web项目持续集成怎么做</h1><p>Web项目的持续集成方案选择比较多，并且相对成熟，这里介绍一下 <strong>gitlab-ci</strong> 持续集成方案。</p>
+<p>这种方式的原理就是为项目在自己的 <strong>linux</strong> 服务器安装并注册 <strong>gitlab-runner</strong> ，注册会有一个 <strong>token</strong> ，服务器上运行 <strong>gitlab-runner</strong> 后， <strong>runner</strong> 会轮询的发送带 <strong>token</strong> 的 <strong>http</strong> 请求给 <strong>gitlab</strong> ,如果 <strong>gitlab</strong> 有任务了，（一般是 <strong>git push</strong> ），那么会把任务信息返回给 <strong>runner</strong> ，然后 <strong>runner</strong> 就开始调用注册时选的 <strong>Executor</strong> 来执行项目根目录下的配置文件 <strong>.gitlab-ci.yml</strong> ，执行后把结果反馈给 <strong>gitlab</strong> 。</p>
+<p>此时我们可以编写 <strong>.gitlab-ci.yml</strong> 脚本，比如设定当 <strong>test</strong> 分支发生 <strong>push</strong> 时，自动运行测试用例、自动构建代码、自动将代码更新到测试人员在测的环境等任何你想在提测时需要做的事情。当 <strong>merge</strong> 到 <strong>master</strong> 时，自动更新线上代码完成上线等各种你想在上线时做的事情。</p>
+<p>这里只要考虑的足够全面，那么之后的项目开发你只需要 <strong>push</strong> 到对应的分支，<strong>gitlab-runner</strong> 会自动完成你想做的所有构建、提测、上线操作。减少重复工作，这就是持续集成的意义所在。</p>
+<h1 id="手把手教你完成小程序的持续集成方案"><a href="#手把手教你完成小程序的持续集成方案" class="headerlink" title="手把手教你完成小程序的持续集成方案"></a>手把手教你完成小程序的持续集成方案</h1><p>小程序的持续集成可以继续使用 <strong>gitlab-ci</strong> 的方式，但由于小程序的构建、提测、提交体验版等操作都需要依赖于 <strong>微信开发者工具</strong> ，而微信开发者工具只有 <strong>Windows</strong> 和 <strong>Mac</strong> 版，所以我们需要一台 <strong>Windows</strong> 服务器来运行 <strong>gitlab-runner</strong>。</p>
+<h2 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h2><ul>
+<li>一台 <strong>Windows</strong> 服务器</li>
+<li>一个权限为 <strong>Maintainer</strong> 的 <strong>gitlab</strong>项目</li>
+</ul>
+<h2 id="2-安装必要软件"><a href="#2-安装必要软件" class="headerlink" title="2. 安装必要软件"></a>2. 安装必要软件</h2><p>在这台 <strong>Windows</strong> 服务器上安装以下软件</p>
+<ul>
+<li><strong>Git</strong></li>
+<li><strong>Node.js</strong></li>
+<li><strong>微信开发者工具</strong></li>
+</ul>
+<h2 id="3-配置gitlab-runner"><a href="#3-配置gitlab-runner" class="headerlink" title="3. 配置gitlab-runner"></a>3. 配置gitlab-runner</h2><ol>
+<li><p>首先下载 <strong>gitlab-runner</strong></p>
+<blockquote>
+<p><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vcnVubmVyL2luc3RhbGwvd2luZG93cy5odG1s">https://docs.gitlab.com/runner/install/windows.html<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+<p>下载完成后将其移动到合适的路径后重命名为 <strong>gitlab-runner.exe</strong></p>
+</li>
+<li><p>在 <strong>Windows</strong> 服务器中打开 <strong>powershell</strong> 并进入 <strong>gitlab-runner.exe</strong> 所在目录，然后执行以下命令</p>
+</li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\gitlab<span class="literal">-runner</span>.exe register</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://p1.ssl.qhimg.com/t015868f4a26eb1c187.png"></p>
+<blockquote>
+<ol>
+<li><p>Please enter the gitlab-ci coordinator URL</p>
+<p>打开想要设置 <strong>CI</strong> 的 <strong>gitlab</strong> 项目，进入页面 <strong>settings</strong> &gt; <strong>CI/CD</strong> &gt; <strong>Runners</strong> &gt; <strong>Expand</strong>，找到 <strong>Set up a specific Runner manually</strong> ，输入 <strong>Specify the following URL during the Runner setup:</strong> 下的地址</p>
+</li>
+<li><p>Please enter the gitlab-ci token for this runner</p>
+<p>输入 <strong>Use the following registration token during setup:</strong> 下的token字符串</p>
+</li>
+<li><p>Please enter the gitlab-ci description for this runner</p>
+<p>输入一个描述</p>
+</li>
+<li><p>Please enter the gitlab-ci tags for this runner</p>
+<p>输入一个标签，该标签对应该runner</p>
+</li>
+<li><p>Please enter the executor</p>
+<p>这里输入 <strong>shell</strong> 就好</p>
+</li>
+</ol>
+</blockquote>
+<p>此时刷新 <strong>gitlab</strong> 页面会新增一个 <strong>gitlab-runner</strong></p>
+<p><img src="https://p1.ssl.qhimg.com/t01365dad71b81d349e.png"></p>
+<ol start="3">
+<li>执行命令 <strong>install</strong></li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\gitlab<span class="literal">-runner</span>.exe install</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>执行命令 <strong>start</strong></li>
+</ol>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\gitlab<span class="literal">-runner</span>.exe <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+
+<p>此时刷新 <strong>gitlab</strong> 页面，之前的 <strong>gitlab-runner</strong> 会更新为以下状态，表示 <strong>gitlab-runner</strong> 配置完成，已经可以开始工作。</p>
+<p><img src="https://p1.ssl.qhimg.com/t01ee74b28ae33622a9.png"></p>
+<h2 id="4-修改gitlab-runner服务的登录账号"><a href="#4-修改gitlab-runner服务的登录账号" class="headerlink" title="4. 修改gitlab-runner服务的登录账号"></a>4. 修改gitlab-runner服务的登录账号</h2><p><img src="https://p1.ssl.qhimg.com/t0129f4e0808e3a95fd.png"></p>
+<p>由于 <strong>gitlab-runner</strong> 服务默认登录账号为 <strong>authority\system</strong> ，而这个账号在执行微信开发者工具命令行时会出现报错，所以我们需要更改 <strong>gitlab-runner</strong> 服务的登录账号为正确账号并重启该服务。</p>
+<blockquote>
+<p>右击计算机 -&gt; 管理 -&gt; 服务和应用程序 -&gt; 服务</p>
+<p>找到 <strong>gitlab-runner</strong> 服务</p>
+<p>右击 <strong>gitlab-runner</strong> -&gt; 属性 -&gt; 登录 -&gt; 此账号 -&gt; 输入可以正确使用微信开发者工具命令行的账号和密码 -&gt; 确定 -&gt; 重启动此服务</p>
+</blockquote>
+<p>修改完成后账号会正确被更改</p>
+<p><img src="https://p1.ssl.qhimg.com/t01a639e59da0c1654b.png"></p>
+<h2 id="5-配置微信开发者工具"><a href="#5-配置微信开发者工具" class="headerlink" title="5. 配置微信开发者工具"></a>5. 配置微信开发者工具</h2><ol>
+<li>使用你的微信账号登录开发者工具</li>
+<li>设置 -&gt; 安全 -&gt; 服务端口 -&gt; 开启</li>
+</ol>
+<p><img src="https://p1.ssl.qhimg.com/t015159defb543bc007.png"></p>
+<h2 id="6-配置-gitlab-ci-yml"><a href="#6-配置-gitlab-ci-yml" class="headerlink" title="6. 配置.gitlab-ci.yml"></a>6. 配置.gitlab-ci.yml</h2><p>在项目根目录创建 <strong>.gitlab-ci.yml</strong> 文件，并填写以下配置。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">stages:</span> <span class="comment"># 定义阶段用于执行任务</span></span><br><span class="line">  - build</span><br><span class="line">  - deploy</span><br><span class="line"></span><br><span class="line"><span class="symbol">build_job:</span> <span class="comment"># 定义 build 任务，名称可以随意命名，只是为了方便理解和区分</span></span><br><span class="line">  <span class="symbol">stage:</span> build <span class="comment"># 该任务属于 build 阶段，要严格与stages中定义的命名一致</span></span><br><span class="line">  <span class="symbol">only:</span></span><br><span class="line">    - master</span><br><span class="line">  <span class="symbol">tags:</span> <span class="comment"># tags 指定运行在哪个 Runner 上，这里需要在我们刚注册的 Runner 运行，和注册时的 mp_win7 匹配</span></span><br><span class="line">    - mp_win7</span><br><span class="line">  <span class="symbol">before_script:</span> <span class="comment"># 执行script之前的钩子</span></span><br><span class="line">    - whoami </span><br><span class="line">  <span class="symbol">script:</span> <span class="comment"># 执行下面脚本，这里可以自定义配置您的构建任务</span></span><br><span class="line">    - echo <span class="string">&quot;build&quot;</span> <span class="comment"># 可以在这里执行您项目的构建编译操作</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">deploy_job:</span> <span class="comment"># 定义 deploy 任务，名称可以随意命名，只是为了方便理解和区分</span></span><br><span class="line">  <span class="symbol">stage:</span> deploy <span class="comment"># 该任务属于 deploy 阶段</span></span><br><span class="line">  <span class="symbol">only:</span></span><br><span class="line">    - master</span><br><span class="line">  <span class="symbol">tags:</span> <span class="comment"># tags 指定运行在哪个 Runner 上，这里需要在我们刚注册的 Runner 运行，和注册时的 mp_win7 匹配</span></span><br><span class="line">    - mp_win7</span><br><span class="line">  <span class="symbol">script:</span> <span class="comment"># 执行下面脚本，这里可以自定义配置您的部署任务</span></span><br><span class="line">    - <span class="symbol">C:</span>\software\wechatDevTool\cli.bat -u <span class="number">0.1</span>.<span class="number">0</span>@<span class="string">&quot;$PWD&quot;</span> --upload-desc 最新的描述 <span class="comment"># 这里使用微信开发者工具提供的命令行工具进行上传体验版操作</span></span><br></pre></td></tr></table></figure>
+
+<p>修改完成后将代码 <strong>push</strong> 到远程仓库，会自动触发CI任务。</p>
+<p><img src="https://p1.ssl.qhimg.com/t019d51361cb922a675.png"></p>
+<p><img src="https://p1.ssl.qhimg.com/t01f0ac08aa114bca76.png"></p>
+<p>此时登录微信小程序官网后台，就可以看到刚刚 <strong>push</strong> 代码时由 <strong>gitlab-ci</strong> 自动上传的体验版了。</p>
+<p><img src="https://p1.ssl.qhimg.com/t011ca19b9ff40db6dc.png"></p>
+<p>有关 <strong>.gitlab-ci.yml</strong> 的详细配置方法可以参考以下文章。</p>
+<blockquote>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21LM3RB">http://urlqh.cn/mK3tA<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21Oaldz">http://urlqh.cn/mNjWs<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+<h2 id="7-持续集成项目方案"><a href="#7-持续集成项目方案" class="headerlink" title="7. 持续集成项目方案"></a>7. 持续集成项目方案</h2><blockquote>
+<p>以下为本人最近在做的 <strong>360瞭望台</strong> 小程序的持续集成方案，您可以根据自己的需要加以改进，并完成属于你的持续集成方案。</p>
+</blockquote>
+<ol>
+<li><p>由于编写 <strong>.gitlab-ci.yml</strong> 时需要用到微信开发者工具的命令行，所以为了便于团队成员使用，我开发了一个 <strong>node.js</strong> 脚本，并发布为 <strong>npm</strong> 模块，用于在 <strong>.gitlab-ci.yml</strong> 调用 <strong>Windows</strong> 虚拟机中的上传命令。</p>
+<p><img src="https://p1.ssl.qhimg.com/t01a2d503871bbc77ad.png"></p>
+</li>
+<li><p>约定团队开发流程，开发新需求时创建 <strong>feature/0.5.1</strong>(需求版本号) 分支，当 <strong>push</strong> 代码时会自动触发 <strong>CI</strong> 任务，并在虚拟机修改为 <strong>test</strong> 环境后提交体验版。</p>
+</li>
+<li><p>发完测试报告后可以将小程序提审时，我们需要将 <strong>feature/0.5.1</strong> 分支 <strong>merge</strong> 到 <strong>audit</strong> 分支，此时会自动触发 <strong>CI</strong> 任务，并在虚拟机修改为 <strong>production</strong> 环境后提交体验版。 <strong>audit</strong> 分支需要添加为受保护的分支，不允许直接 <strong>push</strong> 代码，如果审核没通过那么可以以 <strong>audit</strong> 为基础新建 <strong>feature/0.5.2</strong> 分支进行调整后重新 <strong>merge</strong> 到 <strong>audit</strong>。</p>
+</li>
+<li><p>当审核通过后我们需要将 <strong>audit</strong> 分支代码合并到 <strong>master</strong> 分支，<strong>master</strong> 分支应该永远与线上代码保持同步。</p>
+</li>
+</ol>
+<h1 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h1><blockquote>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21LaTdU">http://urlqh.cn/mKi7T<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21KUEND">http://urlqh.cn/mJPCC<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21JV1Jr">http://urlqh.cn/mIWRk<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21Kb1ky">http://urlqh.cn/mJoY2<i class="fa fa-external-link-alt"></i></span></p>
+<p><span class="exturl" data-url="aHR0cDovL3VybHFoLmNuL21MQ0lC">http://urlqh.cn/mLCIB<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90/" rel="tag"># 持续集成</a>
+              <a href="/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag"># 微信小程序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/08/29/2019-08-29-web-authentication-time/" rel="prev" title="WEB验证的过去现在与未来">
+                  <i class="fa fa-chevron-left"></i> WEB验证的过去现在与未来
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/" rel="next" title="读“在框架设计中寻求平衡”">
+                  读“在框架设计中寻求平衡” <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NexT</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">47k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">43 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.8.2/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","scheme":"Gemini","version":"8.0.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="需求背景为了统计分析用户页面行为，我们经常需要收集鼠标在页面上的各类操作，如页面中按钮和链接的点击和统计较准确的访客页面停留时间。而本文主要记录在解决分别记录鼠标在页面各个区域的停留时间总和这一问题的技术方案的尝试。 简化问题描述：将浏览器的可视窗口平均分为2 × 2的4份， 如图。分别记录鼠标在各个区域的停留时间总和，当然，不能影响页面的正常功能的使用。  当鼠标进入某块区域时开始计时， 移出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记Mousetarck的一些技术尝试">
+<meta property="og:url" content="https://github.com/qcft/2019/08/15/2019-08-15-some-way-to-deal-mouse-track/index.html">
+<meta property="og:site_name" content="qcft&#39;s Blog">
+<meta property="og:description" content="需求背景为了统计分析用户页面行为，我们经常需要收集鼠标在页面上的各类操作，如页面中按钮和链接的点击和统计较准确的访客页面停留时间。而本文主要记录在解决分别记录鼠标在页面各个区域的停留时间总和这一问题的技术方案的尝试。 简化问题描述：将浏览器的可视窗口平均分为2 × 2的4份， 如图。分别记录鼠标在各个区域的停留时间总和，当然，不能影响页面的正常功能的使用。  当鼠标进入某块区域时开始计时， 移出">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t01771478e667255d55.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t01752acf18ecbe6aa7.png">
+<meta property="article:published_time" content="2019-08-15T00:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-23T08:58:18.964Z">
+<meta property="article:tag" content="Javascript">
+<meta property="article:tag" content="Mousetarck">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p5.ssl.qhimg.com/t01771478e667255d55.png">
+
+
+<link rel="canonical" href="https://github.com/qcft/2019/08/15/2019-08-15-some-way-to-deal-mouse-track/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>记Mousetarck的一些技术尝试 | qcft's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">qcft's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">奇舞团商业化前端组</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">需求背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solution-1"><span class="nav-number">2.</span> <span class="nav-text">Solution 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">3.</span> <span class="nav-text">后记</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt=""
+      src="/images/logo.svg">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">Stay hungry, Stay foolish</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/08/15/2019-08-15-some-way-to-deal-mouse-track/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记Mousetarck的一些技术尝试<a href="https://github.com/qcft/qcft.github.io/edit/master/source/_posts/2019-08-15-some-way-to-deal-mouse-track.markdown" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-15 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-15T00:00:00+00:00">2019-08-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://p5.ssl.qhimg.com/t01771478e667255d55.png" alt="mousetrack_img"></p>
+<h3 id="需求背景"><a href="#需求背景" class="headerlink" title="需求背景"></a>需求背景</h3><p>为了统计分析用户页面行为，我们经常需要收集鼠标在页面上的各类操作，如页面中按钮和链接的点击和统计较准确的访客页面停留时间。而本文主要记录在解决<code>分别记录鼠标在页面各个区域的停留时间总和</code>这一问题的技术方案的尝试。</p>
+<p>简化问题描述：将浏览器的可视窗口平均分为2 × 2的4份， 如图。分别记录鼠标在各个区域的停留时间总和，当然，不能影响页面的正常功能的使用。</p>
+<p><img src="https://p5.ssl.qhimg.com/t01752acf18ecbe6aa7.png" alt="页面区域示意"></p>
+<p>当鼠标进入某块区域时开始计时， 移出时结束计时。那问题就在于如何判断鼠标的所在区域。</p>
+<p>于是， 自然就想到了通过鼠标的坐标来判断所处区域 。</p>
+<a id="more"></a>
+
+<h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution 1"></a>Solution 1</h3><p>监听鼠标的mousemove事件， 获取鼠标的坐标(x, y),  根据它来判断鼠标当前处在哪个区域，然后累加当前区域的记录时间。</p>
+<p>此外， 需要对该事件的触发频率进行优化，避免触发频率过快，造成不必要的计算开销。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主要代码</span></span><br><span class="line"><span class="keyword">const</span> mouseTrack = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  fromEvent(<span class="built_in">document</span>, <span class="string">&#x27;mousemove&#x27;</span>)</span><br><span class="line">    .pipe(debounceTime(sampleTime))</span><br><span class="line">    .subscribe(<span class="function">(<span class="params">e: MouseEvent</span>) =&gt;</span> &#123;  </span><br><span class="line">      	<span class="keyword">const</span> &#123; clientX, clientY &#125; = e</span><br><span class="line">        <span class="keyword">let</span> currentPart : number = 	<span class="comment">// 计算所在区域</span></span><br><span class="line">          <span class="built_in">Math</span>.floor(clientX / unitWidth) + </span><br><span class="line">          n * <span class="built_in">Math</span>.floor(clientY / unitHeight);</span><br><span class="line"> </span><br><span class="line">    	<span class="keyword">const</span> now = <span class="keyword">new</span> <span class="built_in">Date</span>().getTime();</span><br><span class="line">    	<span class="keyword">try</span> &#123;</span><br><span class="line">        	  record[lastPart].duration += now - tick;</span><br><span class="line">    	&#125; <span class="keyword">catch</span>(err) &#123;&#125;</span><br><span class="line">      </span><br><span class="line">        tick = now;</span><br><span class="line">        lastPart = currentPart;</span><br><span class="line">        <span class="built_in">console</span>.log(record.map(<span class="function"><span class="params">v</span> =&gt;</span> v.duration));</span><br><span class="line">     &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="string">``</span><span class="string">``</span></span><br><span class="line"></span><br><span class="line">问题似乎就这样愉快的被解决了！</span><br><span class="line"></span><br><span class="line">但是经过一番测试之后， 发现了一些不足的地方。</span><br><span class="line"></span><br><span class="line">+ 页面加载后， 若鼠标一直不动， 则无法触发事件，进而无法判断所在区域（疑无解）</span><br><span class="line">+ 当用户以较快的速度移动，有时导致统计的时间和所在区域对应错误（统计的准确性有待提高）</span><br><span class="line">+ 实际需要统计的区域肯定不是简单均分页面的<span class="number">4</span>块区域， 实际判断鼠标所在区域的计算会更复杂</span><br><span class="line"></span><br><span class="line">对于mousemove这类触发频繁的事件， 在其他如drag， <span class="built_in">window</span> resize， scroll的场景下，可以使用函数节流、防抖等操作优化执行频率，且无明显副作用。但在此需求下，如果时间间隔过大，统计的准确性明显下降，如果时间间隔太小甚至不对触发频率进行限制， 而增加的性能开销也不是我们想要的。</span><br><span class="line"></span><br><span class="line">难道，就秉持中庸之道， 取个中间值？</span><br><span class="line"></span><br><span class="line">后期也了解到通过分析搜集海量的这种统计数据， 清洗极端数据， 一通分析之后，也可以得到较准确的结果。单纯的收集鼠标在某个区域的时间意义不大， 主要还是通过海量的数据搜集分析， 进而了解用户在页面上行为、喜好、热点区域等。</span><br><span class="line"></span><br><span class="line">道理是都懂，但是作为一个优秀的程序员， 总是想在自己的一亩三分地写出更好的代码，能不能提供比较准确的数据，又不会产生较大的性能开销？</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### Solution 2</span><br><span class="line"></span><br><span class="line">上述方式需要频繁的触发事件， 主要是为了获取鼠标当前所在区域， 那我就在统计区域上加个透明div, 当div的<span class="string">`mouseenter`</span>事件触发时，开始计时， 触发<span class="string">`mouseleave`</span>时， 结束计时。加上后，发现由于div的遮盖， 页面中的各类按钮，链接都无法触发。这肯定不行， 又查了一下事件穿透， get了[pointer-events](https:<span class="comment">//www.w3.org/TR/SVG/interact.html#PointerEventsProperty)属性.</span></span><br><span class="line"></span><br><span class="line"><span class="string">`pointer-events`</span>可以禁用鼠标事件， 允许事件穿透，常用的属性值(auto / none), 其他属性值只适用于svg元素</span><br><span class="line"></span><br><span class="line">愉快的加上该属性， 发现透明div的mouseenter/mouseleave事件也被禁止，无法触发了......</span><br><span class="line"></span><br><span class="line">稳住心态，思索了一下</span><br><span class="line"></span><br><span class="line">![pointer-evnets](https:<span class="comment">//p3.ssl.qhimg.com/t012d3f90a084507415.png)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>鼠标首次移动：<br>    记录开始时间<br>    当前所在区域 pointer-events: none;<br>某一区域触发mouseenter事件：<br>    该区域变成 pointer-events: none;<br>    原来区域 pointer-events: all;<br>    记录原区域的停留时间<br>    记录进入新区域的时间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">鼠标当前所在的透明的div区域处于事件穿透状态， 其他区域被div正常覆盖，当鼠标移入其他区域时， 移入区域变成事件穿透状态(页面的链接、按钮等功能正常)， 原来区域还原。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">通过这种方式，可以较好的解决上面的问题</span><br><span class="line"></span><br><span class="line">+ 不用mousemove这种频繁触发的事件，节省了额外的开销</span><br><span class="line"></span><br><span class="line">+ 只要鼠标的移动速度在浏览器的捕获范围内， 它在不同区域之间的切换都能很好的触发事件， 大大提供了统计数据的准确性</span><br><span class="line"></span><br><span class="line">不足：</span><br><span class="line"></span><br><span class="line">+ pointer-events的兼容性， 兼容到 IE11 (硬伤)</span><br><span class="line"></span><br><span class="line">还有一点瑕疵，就是鼠标在不同区域移动时， 需要操作div的pointer-events属性在all和none之间切换， 且在非鼠标所在区域，透明div是遮挡页面鼠标的各种事件的。能不能不让它遮挡呢？</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### Solution 3</span><br><span class="line"></span><br><span class="line">其实，是看中了pointer-events的&#96;stroke&#96;属性值， 利用它， 可以使得在元素**内部**事件穿透， 在元素**边框**触发事件，极好的满足了我的诉求,  由于该属性只在SVG下生效，于是将透明div换成了SVG元素。</span><br><span class="line"></span><br><span class="line">![pointer-events-border](https:&#x2F;&#x2F;p0.ssl.qhimg.com&#x2F;t01d62897a2fba37bbe.png)</span><br><span class="line"></span><br><span class="line">实际测试一番后发现，要以较慢的速度移动鼠标，才会触发SVG边框的事件，稍快移动鼠标， 边框就无法捕捉事件。由于边框的宽度有限， 移动太快， 就超出了浏览器的捕捉极限。之后又试着增大了边框的宽度， 但效果变化不是很明显。</span><br><span class="line"></span><br><span class="line">感觉有点奇怪， 于是新建一个测试页面，监听一个边框为1px的div，在我的手速极限内， &#96;mouseenter&#96;事件正常触发。但是在svg里面为什么触发比较艰难呢？</span><br><span class="line"></span><br><span class="line">是浏览器的极限就是这样，还是我写的SVG有问题？一直没有解决这个问题，欢迎大家指教 。</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;javascript</span><br><span class="line">const drawsvg &#x3D; function() &#123;</span><br><span class="line">    const svgns &#x3D; &quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot;; </span><br><span class="line">    let svg &#x3D; document.createElementNS(svgns, &quot;svg&quot;); </span><br><span class="line">    svg.setAttribute(); &#x2F;&#x2F; other attribute</span><br><span class="line">    svg.setAttribute(&quot;style&quot;, &quot;pointer-events: none;&quot;);</span><br><span class="line"></span><br><span class="line">    let polygon &#x3D; document.createElementNS(svgns, &quot;polygon&quot;);</span><br><span class="line">    polygon.setAttribute(); &#x2F;&#x2F; other attribute</span><br><span class="line">    polygon.setAttribute(&quot;style&quot;, &quot;pointer-events: stroke;&quot;);</span><br><span class="line">    </span><br><span class="line">    svg.appendChild(polygon);</span><br><span class="line">    document.body.appendChild(svg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>本篇文章主要记录在解决<strong>记录鼠标在页面各个区域的停留时间总和</strong>这一需求时的实现方式的尝试和解决相应问题的进一步尝试。现阶段，选择的是方案二和方案一组合使用，在满足pointer-events属性的兼容性情况下，使用方案二， 退之， 则使用第一种方案。</p>
+<p><em>如文章有任何bug，欢迎指出</em>！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+              <a href="/tags/Mousetarck/" rel="tag"># Mousetarck</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/08/29/2019-08-29-web-authentication-time/" rel="next" title="WEB验证的过去现在与未来">
+                  WEB验证的过去现在与未来 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NexT</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">47k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">43 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.8.2/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+
+    </div>
+</body>
+</html>

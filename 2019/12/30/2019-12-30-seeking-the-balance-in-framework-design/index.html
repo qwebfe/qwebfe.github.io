@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","scheme":"Gemini","version":"8.0.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="今年 JSConf.Asia 会议上，Vue.js 的作者 @尤雨溪 在关于 前端框架设计取舍 上作了分享。 分享主要从两个部分展开介绍： 职责范围（Scope）和 渲染机制（Render Mechanism）。 职责范围小的职责范围具有很好的灵活度，但关于构建抽象上要求开发者有自主学习能力。相反，大的职责范围致力于提供抽象概念，倘若抽象不适用，想改变时，却缺乏灵活度。 Vue 在职责范围这个问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读“在框架设计中寻求平衡”">
+<meta property="og:url" content="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/index.html">
+<meta property="og:site_name" content="qcft&#39;s Blog">
+<meta property="og:description" content="今年 JSConf.Asia 会议上，Vue.js 的作者 @尤雨溪 在关于 前端框架设计取舍 上作了分享。 分享主要从两个部分展开介绍： 职责范围（Scope）和 渲染机制（Render Mechanism）。 职责范围小的职责范围具有很好的灵活度，但关于构建抽象上要求开发者有自主学习能力。相反，大的职责范围致力于提供抽象概念，倘若抽象不适用，想改变时，却缺乏灵活度。 Vue 在职责范围这个问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01fe27088aa20d3ded.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01352166f663a62c22.png">
+<meta property="og:image" content="https://p3.ssl.qhimg.com/t01712c2274c39bc718.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01514e25d142756025.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t01df369a48ee8b05df.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t01a85190317eae945e.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t015cf5539238c56211.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01dc325e2cba4ce2e2.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t015efdcb0ccb5fb4a3.png">
+<meta property="article:published_time" content="2019-12-30T00:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-23T08:58:18.968Z">
+<meta property="article:tag" content="框架设计">
+<meta property="article:tag" content="Vue">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p1.ssl.qhimg.com/t01fe27088aa20d3ded.png">
+
+
+<link rel="canonical" href="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>读“在框架设计中寻求平衡” | qcft's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">qcft's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">奇舞团商业化前端组</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%8C%E8%B4%A3%E8%8C%83%E5%9B%B4"><span class="nav-number">1.</span> <span class="nav-text">职责范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93%E6%9C%BA%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">渲染机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt=""
+      src="/images/logo.svg">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">Stay hungry, Stay foolish</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          读“在框架设计中寻求平衡”<a href="https://github.com/qcft/qcft.github.io/edit/master/source/_posts/2019-12-30-seeking-the-balance-in-framework-design.markdown" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-30 00:00:00" itemprop="dateCreated datePublished" datetime="2019-12-30T00:00:00+00:00">2019-12-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%98%85%E8%AF%BB/" itemprop="url" rel="index"><span itemprop="name">阅读</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>今年 JSConf.Asia 会议上，Vue.js 的作者 @尤雨溪 在关于 前端框架设计取舍 上作了分享。 分享主要从两个部分展开介绍： 职责范围（Scope）和 渲染机制（Render Mechanism）。</p>
+<h4 id="职责范围"><a href="#职责范围" class="headerlink" title="职责范围"></a>职责范围</h4><p>小的职责范围具有很好的灵活度，但关于构建抽象上要求开发者有自主学习能力。相反，大的职责范围致力于提供抽象概念，倘若抽象不适用，想改变时，却缺乏灵活度。</p>
+<p>Vue 在职责范围这个问题的处理方式上，采取了渐进式。</p>
+<p><img src="https://p1.ssl.qhimg.com/t01fe27088aa20d3ded.png"></p>
+<p>通过渐进的方式来选择特性，让更多的人专注于开发，而不是学习一堆在当前开发中可能不需要的概念。对于当前一些问题，开发者仍然能通过文档来获取一些解决方案。</p>
+<p>这种渐进式一来让 Vue 也存在着大职责范围中的统一维护面问题；二来 Vue 生态也无法像小职责范围那样的多样化。</p>
+<a id="more"></a>
+<h4 id="渲染机制"><a href="#渲染机制" class="headerlink" title="渲染机制"></a>渲染机制</h4><p>JSX 具有完整的 JavaScript 表现力，但由于渲染函数的动态特性使其难以优化。模板的约束允许编译器对你的意图作做预判，从而给它更多的空间执行优化；但因受限于模板语法，从而失去了 JavaScript 表达能力。</p>
+<p>单纯取舍不能解决问题，Vue 在渲染机制方面选择了 VDOM 结合模板编译，在模板编译上入手优化，引入了SVELTE，只对动态节点作 VDOM Diff 算法，从而提高了运行速度。</p>
+<p><img src="https://p1.ssl.qhimg.com/t01352166f663a62c22.png" alt="svelte-logo-horizontal.svg"></p>
+<p>接下来看看 SVELTE 是怎么处理的。</p>
+<p>场景1：只有一个动态节点</p>
+<p><img src="https://p3.ssl.qhimg.com/t01712c2274c39bc718.png" alt="image"></p>
+<p>当模板中只有一个动态节点时，整个节点结构是静态的、不会改变，我们只需直接更新 message 字符串这一个动态节点。</p>
+<p>场景2：存在结构指令</p>
+<p><img src="https://p1.ssl.qhimg.com/t01514e25d142756025.png" alt="v-if Demo"></p>
+<p>若存在结构指令 <code>v-if</code>，此时这个节点可能存在或可能不存在。处理办法是进行拆分，以 <code>v-if</code> 为界拆分成两个嵌套块。 </p>
+<ul>
+<li><code>v-if</code> 外部：是一个静态节点结构，只有 <code>v-if</code> 这一个动态节点</li>
+<li><code>v-if</code> 内部：也是一个静态节点结构，只有 <code>&#123;&#123; message &#125;&#125;</code> 一个动态节点</li>
+</ul>
+<p>唯一要处理的就是将每个块内的动态节点数组扁平化。</p>
+<blockquote>
+<p>数组扁平化是指将一个多维数组变为一维数组</p>
+</blockquote>
+<p><img src="https://p5.ssl.qhimg.com/t01df369a48ee8b05df.png" alt="v-for Demo"></p>
+<p>又或者存在的是结构指令 <code>v-for</code>，处理方式也是一样，将代码拆分成嵌套块…</p>
+<p><img src="https://p5.ssl.qhimg.com/t01a85190317eae945e.png" alt="more v-if, v-for Demo"></p>
+<p>若模板中存在多个 <code>v-if</code>、<code>v-for</code>，亦是如此。以结构指令为界，将模板拆分成嵌套块。每个块内的节点结构是静态的，动态节点维护在一个单一扁平化数组中。</p>
+<p><img src="https://p1.ssl.qhimg.com/t015cf5539238c56211.png" alt="Block Tree"></p>
+<p><img src="https://p1.ssl.qhimg.com/t01dc325e2cba4ce2e2.png" alt="Block Tree Demo"></p>
+<p>假设这个区块树存在上图的节点，那么得出的扁平化数组（结构指令 v-if, v-for 等本身也可以看出一个节点）为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">B5: [node5, node6, node7]</span><br><span class="line">B4: [node1, node2, node3, node4]</span><br><span class="line">B3: [B5]</span><br><span class="line">B2: [B4]</span><br><span class="line">B1: [B2, B3]</span><br></pre></td></tr></table></figure>
+<p>如此一来，对于同一模板的Diff， vue2.x 和 vue3.x 在做法上就存在比较大的差异。vue2.x 会做一个完整的 Diff 操作，而 vue3.x 是比较一个单一扁平化数组中的文本是否发生变化。有实验表明，vue3.0 中使用的新的编译策略的速度比 vue2.x 快了6倍多。虽说是个实验数据，但或多或少，vue3 都是更快。</p>
+<p><img src="https://p1.ssl.qhimg.com/t015efdcb0ccb5fb4a3.png" alt="实验数据"></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>最后，我们回到本次分享中的话题。通过 @尤雨溪 的分享，我们能感受到他在框架设计中是如何寻求平衡的，这对我们今后的框架设计存在着许多借鉴意义。</p>
+<p>如何获取一个最佳平衡点，我们都曾有过努力寻找最佳的方式来解决问题的经历，我想这就是一个寻求最佳平衡点的过程。这个最佳方式不仅能解决现有问题，并且与后期的发展也一致，在我看来，这应该就是最佳平衡点。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1/" rel="tag"># 框架设计</a>
+              <a href="/tags/Vue/" rel="tag"># Vue</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/10/31/2019-10-31-wechat-ci/" rel="prev" title="微信小程序工程化之持续集成方案">
+                  <i class="fa fa-chevron-left"></i> 微信小程序工程化之持续集成方案
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/23/2020-04-23-experience-about-gatsby/" rel="next" title="Gatsby 踩过的那些坑">
+                  Gatsby 踩过的那些坑 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NexT</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">47k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">43 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.8.2/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+
+    </div>
+</body>
+</html>
