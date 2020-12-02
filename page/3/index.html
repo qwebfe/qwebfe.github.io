@@ -135,17 +135,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -220,24 +220,29 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qcft/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qcft&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -273,7 +278,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/08/15/2019-08-15-some-way-to-deal-mouse-track/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/08/29/web-authentication-time/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -287,7 +292,111 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/08/15/2019-08-15-some-way-to-deal-mouse-track/" class="post-title-link" itemprop="url">记Mousetarck的一些技术尝试</a>
+            <a href="/2019/08/29/web-authentication-time/" class="post-title-link" itemprop="url">WEB验证的过去现在与未来</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-29 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-29T00:00:00+00:00">2019-08-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><img src="https://p1.ssl.qhimg.com/t0159cbba79e1dd5740.png"></p>
+<blockquote>
+<p>本文作者：韩永刚，360奇舞团 前端开发工程师。</p>
+</blockquote>
+<p>本文将以时间维度介绍一些目前常见的Web验证方法以及相关协议，带你了解Web验证的过去、现在与未来。</p>
+<h2 id="传统身份验证方式"><a href="#传统身份验证方式" class="headerlink" title="传统身份验证方式"></a>传统身份验证方式</h2><p><img src="https://p1.ssl.qhimg.com/t01e5be0ec30c7e5009.jpg"></p>
+<h3 id="过去普遍的做法可能是这样的"><a href="#过去普遍的做法可能是这样的" class="headerlink" title="过去普遍的做法可能是这样的"></a>过去普遍的做法可能是这样的</h3><h4 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h4><ul>
+<li><p>前端注册页面填写用户名和密码表单，发送给后台服务器</p>
+</li>
+<li><p>后台服务器将接收到的用户名和密码进行加密并插入到数据库，然后回馈是否成功的信息给前端页面。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/29/web-authentication-time/" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/08/15/some-way-to-deal-mouse-track/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/08/15/some-way-to-deal-mouse-track/" class="post-title-link" itemprop="url">记Mousetarck的一些技术尝试</a>
         </h2>
 
         <div class="post-meta-container">
@@ -342,7 +451,7 @@
 <p>于是， 自然就想到了通过鼠标的坐标来判断所处区域 。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/08/15/2019-08-15-some-way-to-deal-mouse-track/#more" rel="contents">
+              <a class="btn" href="/2019/08/15/some-way-to-deal-mouse-track/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -421,14 +530,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">47k</span>
+    <span title="站点总字数">51k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">43 分钟</span>
+    <span title="站点阅读时长">46 分钟</span>
   </span>
 </div>
 

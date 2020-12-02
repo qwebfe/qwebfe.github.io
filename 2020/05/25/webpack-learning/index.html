@@ -28,7 +28,7 @@
   <meta name="description" content="最近看了些webpack相关的视频，对webpack有了进一步的学习，这里做了些总结，可能不全面、片面，欢迎大家指出，一起学习讨论。 提到webpack先想到的是文件的打包，对代码进行构建，生成的结果用于生产环境。下面以自问自答的形式进行记录： 1. 为什么需要对前端代码进行打包呢大概有以下几点原因：  开发分工的变化，早期前端开发负责页面的样式实现，简单的交互逻辑。随着单页面应用的盛行，不仅要还">
 <meta property="og:type" content="article">
 <meta property="og:title" content="webpack 那些事儿">
-<meta property="og:url" content="https://github.com/qcft/2020/05/25/2020-05-25-webpack-learning/index.html">
+<meta property="og:url" content="https://github.com/qcft/2020/05/25/webpack-learning/index.html">
 <meta property="og:site_name" content="qcft&#39;s Blog">
 <meta property="og:description" content="最近看了些webpack相关的视频，对webpack有了进一步的学习，这里做了些总结，可能不全面、片面，欢迎大家指出，一起学习讨论。 提到webpack先想到的是文件的打包，对代码进行构建，生成的结果用于生产环境。下面以自问自答的形式进行记录： 1. 为什么需要对前端代码进行打包呢大概有以下几点原因：  开发分工的变化，早期前端开发负责页面的样式实现，简单的交互逻辑。随着单页面应用的盛行，不仅要还">
 <meta property="og:locale" content="zh_CN">
@@ -38,13 +38,13 @@
 <meta property="og:image" content="http://p406.qhimgs4.com/t012fa5055eee81e629.png">
 <meta property="og:image" content="http://p406.qhimgs4.com/t019af27758b3772b4e.png">
 <meta property="article:published_time" content="2020-05-25T00:00:00.000Z">
-<meta property="article:modified_time" content="2020-11-23T09:41:54.889Z">
+<meta property="article:modified_time" content="2020-12-02T03:51:03.285Z">
 <meta property="article:tag" content="webpack">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://p2.qhimg.com/t0172b886aa2215d864.jpg">
 
 
-<link rel="canonical" href="https://github.com/qcft/2020/05/25/2020-05-25-webpack-learning/">
+<link rel="canonical" href="https://github.com/qcft/2020/05/25/webpack-learning/">
 
 
 <script data-pjax class="page-configurations">
@@ -144,17 +144,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -230,24 +230,29 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qcft/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qcft&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -284,7 +289,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/05/25/2020-05-25-webpack-learning/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/05/25/webpack-learning/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -447,12 +452,12 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/05/13/2020-05-13-explain-new-characters-vue3/" rel="prev" title="解密Vue3.0的新特性">
+                <a href="/2020/05/13/explain-new-characters-vue3/" rel="prev" title="解密Vue3.0的新特性">
                   <i class="fa fa-chevron-left"></i> 解密Vue3.0的新特性
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/07/29/2020-07-29-git/" rel="next" title="git基础原理和使用参考">
+                <a href="/2020/07/29/git/" rel="next" title="git基础原理和使用参考">
                   git基础原理和使用参考 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
@@ -514,14 +519,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">47k</span>
+    <span title="站点总字数">51k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">43 分钟</span>
+    <span title="站点阅读时长">46 分钟</span>
   </span>
 </div>
 

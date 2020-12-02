@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","scheme":"Gemini","version":"8.0.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="初出茅庐之时，看到他人的博客，总会产生一丝新鲜感，好奇之心让你不知不觉跟随着他人的脚步，在写作平台开始展露拳脚。 发布了两三篇文章后，又发现有些人并非在写作平台写作，而是在拥有自己域名的博客平台发布。就像小时候看到邻居小孩吃糖，不知甜不甜就想着自己也能吃一块。然后就开始折腾了，购买域名空间，独立搭建博客。 从写文章到搭建博客这思路是对的，但不乏带有点跟风之意。博客，技术圈的个人名片。特别是在招聘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="博客之旅：从 Jekyll 到 Hexo">
+<meta property="og:url" content="https://github.com/qcft/2020/11/26/build-hexo-blog/index.html">
+<meta property="og:site_name" content="qcft&#39;s Blog">
+<meta property="og:description" content="初出茅庐之时，看到他人的博客，总会产生一丝新鲜感，好奇之心让你不知不觉跟随着他人的脚步，在写作平台开始展露拳脚。 发布了两三篇文章后，又发现有些人并非在写作平台写作，而是在拥有自己域名的博客平台发布。就像小时候看到邻居小孩吃糖，不知甜不甜就想着自己也能吃一块。然后就开始折腾了，购买域名空间，独立搭建博客。 从写文章到搭建博客这思路是对的，但不乏带有点跟风之意。博客，技术圈的个人名片。特别是在招聘">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://user-images.githubusercontent.com/16272760/99784261-872d3200-2b56-11eb-807c-869042d1f6e8.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01b00009360875756d.png">
+<meta property="og:image" content="https://p4.ssl.qhimg.com/t012a4eb716b67ab0e7.png">
+<meta property="og:image" content="https://p3.ssl.qhimg.com/t0150046ab66f6286a6.png">
+<meta property="og:image" content="https://p0.ssl.qhimg.com/t0177f583632427bf95.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t01a8332cda870c3db1.png">
+<meta property="og:image" content="https://p2.ssl.qhimg.com/t01867de50a8cd84260.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t012b03686dfd70e308.png">
+<meta property="og:image" content="https://p4.ssl.qhimg.com/t01d2f70045349a4ccf.png">
+<meta property="og:image" content="https://p1.ssl.qhimg.com/t01c28f4fde1a753294.png">
+<meta property="article:published_time" content="2020-11-26T00:00:00.000Z">
+<meta property="article:modified_time" content="2020-12-02T03:51:03.285Z">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Github">
+<meta property="article:tag" content="Jekyll">
+<meta property="article:tag" content="Travis">
+<meta property="article:tag" content="博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/16272760/99784261-872d3200-2b56-11eb-807c-869042d1f6e8.png">
+
+
+<link rel="canonical" href="https://github.com/qcft/2020/11/26/build-hexo-blog/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>博客之旅：从 Jekyll 到 Hexo | qcft's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">qcft's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">奇舞团商业化前端组</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Github-Pages-%E5%85%A5%E9%97%A8"><span class="nav-number">1.</span> <span class="nav-text">Github Pages 入门</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%A1%86%E6%9E%B6"><span class="nav-number">2.</span> <span class="nav-text">静态博客框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Jekyll"><span class="nav-number">2.1.</span> <span class="nav-text">Jekyll</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo"><span class="nav-number">2.2.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%99"><span class="nav-number">2.2.1.</span> <span class="nav-text">建站</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E4%BD%9C"><span class="nav-number">2.2.2.</span> <span class="nav-text">写作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">2.2.3.</span> <span class="nav-text">部署</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">3.</span> <span class="nav-text">后记</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt=""
+      src="/images/logo.svg">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">Stay hungry, Stay foolish</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qcft/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qcft&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/11/26/build-hexo-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          博客之旅：从 Jekyll 到 Hexo<a href="https://github.com/qcft/qcft.github.io/edit/master/source/_posts/2020-11-26-build-hexo-blog.md" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-26 00:00:00" itemprop="dateCreated datePublished" datetime="2020-11-26T00:00:00+00:00">2020-11-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">教程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://user-images.githubusercontent.com/16272760/99784261-872d3200-2b56-11eb-807c-869042d1f6e8.png"></p>
+<p>初出茅庐之时，看到他人的博客，总会产生一丝新鲜感，好奇之心让你不知不觉跟随着他人的脚步，在写作平台开始展露拳脚。</p>
+<p>发布了两三篇文章后，又发现有些人并非在写作平台写作，而是在拥有自己域名的博客平台发布。就像小时候看到邻居小孩吃糖，不知甜不甜就想着自己也能吃一块。然后就开始折腾了，购买域名空间，独立搭建博客。</p>
+<p>从写文章到搭建博客这思路是对的，但不乏带有点跟风之意。博客，技术圈的个人名片。特别是在招聘面试时，部分面试官会特别关注面试者是否有个人博客，一来从博客上能看出面试者的表达能力和涉猎，二来能看到个人的代码水平和编码习惯。</p>
+<p>此外，博客的书写对个人也是一种技能锻炼。资料的整理，特别是技术问题的整理，有助于自己下一次遇到类似的问题时能否更好的回忆细节和复用相关代码。</p>
+<p>但如何能又快又好的搭建，这是讲究方法的。</p>
+<a id="more"></a>
+
+<p>笔者在开发博客前，简单做了调研，了解到当下最受欢迎的搭建模式就是借助<a href="https://github.com/">GitHub Page</a>和静态博客框架。接下来向大家介绍整个博客的搭建流程。</p>
+<h1 id="Github-Pages-入门"><a href="#Github-Pages-入门" class="headerlink" title="Github Pages 入门"></a>Github Pages 入门</h1><ol>
+<li>首先，<a href="https://github.com/join">注册Github帐号</a>。<br><img src="https://p1.ssl.qhimg.com/t01b00009360875756d.png" alt="注册Github帐号"></li>
+<li>然后，将代码托管在 Github 上。<br>新建一个 repository。如果你希望你的站点能通过 &lt;你的 GitHub 用户名&gt;.github.io 域名访问，你的 repository 应该直接命名为 &lt;你的 GitHub 用户名&gt;.github.io。例如，<code>qcft.github.io</code>。</li>
+<li>最后配置 Github Pages，具体细节详见 <span class="exturl" data-url="aHR0cHM6Ly9ndWlkZXMuZ2l0aHViLmNvbS9mZWF0dXJlcy9wYWdlcy8=">Getting Started with GitHub Pages<i class="fa fa-external-link-alt"></i></span>。</li>
+</ol>
+<h1 id="静态博客框架"><a href="#静态博客框架" class="headerlink" title="静态博客框架"></a>静态博客框架</h1><p>根据笔者调研，网上讨论最多的博客框架当属 Jekyll 和 Hexo。有人说，<span class="exturl" data-url="aHR0cHM6Ly9qZWt5bGxyYi5jb20v">Jekyll<i class="fa fa-external-link-alt"></i></span> 就是为了写博客打造的。Github Pages 中提供的 Jekyll 主题似乎也验证了这点。早期组内的博客也是基于 Jekyll 搭建的，其原因我想大概是 GitHub 自带 Jekyll 引擎，无需部署静态页面，只放项目源码即可。后因开发环境依赖问题不便维护，便弃 Jekyll 从 Hexo。据说 Hexo 的出现是因为 Jekyll 比较慢，大概是早期 Hexo 还不够成熟，还不支持自动化部署，也给使用者带来了不便，但那个时候已经过去了。接下来向大家具体介绍 Jekyll 和 Hexo。 </p>
+<h2 id="Jekyll"><a href="#Jekyll" class="headerlink" title="Jekyll"></a>Jekyll</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gem install bundler jekyll</span><br><span class="line"></span><br><span class="line">jekyll new my-awesome-site</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> my-awesome-site</span><br><span class="line"></span><br><span class="line">bundle <span class="built_in">exec</span> jekyll serve</span><br><span class="line"></span><br><span class="line"><span class="comment"># =&gt; Now browse to http://localhost:4000</span></span><br></pre></td></tr></table></figure>
+
+<p>通过以上几个命令可以看出，Jekyll 是基于 Ruby 实现的，安装 Jekyll 需要搭建 Ruby 环境，但在 Windows 搭建 Ruby 环境并不被推荐。若你是 Windows 用户，那可能一开始就跌倒在安装 Jekyll 的起跑线上。</p>
+<p>我们组的早期博客基于 Jekyll，运行了小一年时间，但用户体验不是很好。受环境搭建影响，多数成员无法启动本地服务器，都是盲写文章，推送上线后，发现问题再修复。有一次把文章日期提前了一天，上线后新文章一直未被构建。无法本地预览，一定程度上影响排查效率。后面求助了同事，也没找到原因，但在第二天早上被告知文章构建成功了。笔者一时蒙蔽，后查阅了各手资源，才得知以下这个答案：</p>
+<blockquote>
+<p>Jekyll 是不会构建未来日期的文章的！</p>
+</blockquote>
+<p>在主题方面，有想法的你可自行选择<a href="https://github.com/topics/jekyll-theme">Jekyll主题</a>。按照安装提示，或基于gem，或只取远程主题，或直接直接拷贝至项目中，然后配置 <code>_config.yml</code> 文件即可。</p>
+<figure class="highlight yml"><figcaption><span>_config.yml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">minimal-mistakes-jekyll</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>厌倦了 Jekyll 的那段爱恨情仇，最终投向了 Hexo 的怀抱。</p>
+<hr>
+<h2 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h2><blockquote>
+<p>A fast, simple &amp; powerful blog framework<br>快速、简洁且高效的博客框架</p>
+</blockquote>
+<p>Hexo 是基于 NodeJs 实现，在 Windows 上安装 NodeJs 开发环境可谓是相当简单。何其美哉！乐哉！</p>
+<p>Hexo 默认的主题是 <code>landscape</code>，接触过博客园的童鞋可能觉得该主题有它的味道。萝卜青菜各有所爱，你可自行选择<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL3RoZW1lcy8=">主题<i class="fa fa-external-link-alt"></i></span>。关于 <code>Hexo</code> 的主题，笔者想说是我喜欢的调调😉，本组博客应用的主题是<span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy8=">NexT<i class="fa fa-external-link-alt"></i></span></p>
+<h3 id="建站"><a href="#建站" class="headerlink" title="建站"></a>建站</h3><p>啥也不说了，搬砖吧。</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;folder&gt;</span><br><span class="line"></span><br><span class="line">cd &lt;folder&gt;</span><br><span class="line"></span><br><span class="line">npm install</span><br><span class="line"></span><br><span class="line">npm server</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>M：咦? 这一套指令好像在哪见过👀。<br>H：🙊 vue ?<br>M：嗷呜…</p>
+</blockquote>
+<p>项目初始化完成后，指定文件夹的目录如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml # 网站的 配置 信息</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└── themes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>scaffolds: 模版文件夹, 当你新建文章时，Hexo 会根据 scaffold 来建立文件</li>
+<li>source: 资源文件夹，存放用户资源的地方。除 _posts 文件夹之外，开头命名为 _ (下划线)的文件 / 文件夹和隐藏的文件将会被忽略。Markdown 和 HTML 文件会被解析并放到 public 文件夹，而其他文件会被拷贝过去。</li>
+<li>themes: 主题文件夹，把你想要的主题拷贝至当前目录即可。</li>
+<li>_config.yml: 网站的配置信息，Hexo 这个点很友好，它给相关配置都做了注释和<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL3poLWNuL2RvY3MvY29uZmlndXJhdGlvbi5odG1s">文档说明<i class="fa fa-external-link-alt"></i></span>。<ul>
+<li>theme: 你选用的主题，默认为 <code>landscape</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h3><p>项目创建完成后，我们就可以开始写作了。关于写作，Hexo cli 也提供了相关指令，可快速创建一篇新文章或者新的页面。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new [layout] &lt;title&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>layout，Hexo 有三种默认布局：post、page 和 draft。基于不同类型创建的文件会存储在各自对应的路径中，你可以编辑 <code>scaffolds/*</code> 下的模板文件，保证新页面的规范性。</li>
+<li>title，Hexo 默认以标题做为文件名称，但你可编辑 new_post_name 参数来改变默认的文件名称，举例来说，设为 :year-:month-:day-:title.md 可让你更方便的通过日期来管理文章。</li>
+</ul>
+<figure class="highlight yml"><figcaption><span>_config.yml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">new_post_name:</span> <span class="string">:year-:month-:day-:title.md</span></span><br></pre></td></tr></table></figure>
+
+<p>执行指令时只需输入文件名，创建成功会自动带上当天日期，文件内容也会按照模板格式显示。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new <span class="built_in">test</span> <span class="comment"># ==&gt; source/_posts/2020-12-01-test.md</span></span><br></pre></td></tr></table></figure>
+
+
+<p>若你想了解更多使用方法，可前往<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL3poLWNuL2RvY3Mv">hexo官网<i class="fa fa-external-link-alt"></i></span>。</p>
+<h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>Hexo 官方介绍了三种部署方式。由于我们代码托管在了 Github 上，那笔者就部署到 <code>GitHub Pages</code> 展开介绍。</p>
+<p>1、将你本地的 Hexo 站点文件夹推送到 repository（<code>&lt;你的 GitHub 用户名&gt;.github.io</code>） 中。默认情况下 public 目录将不会被推送到 repository 中，你应该检查 <code>.gitignore</code> 文件中是否包含 public 一行，如果没有请加上。<br>2、将 <a href="https://github.com/marketplace/travis-ci">Travis CI</a> 添加到你的 GitHub 账户中。<br><img src="https://p4.ssl.qhimg.com/t012a4eb716b67ab0e7.png" alt="选择一个账号"><br><img src="https://p3.ssl.qhimg.com/t0150046ab66f6286a6.png" alt="授予此应用访问权限"><br><img src="https://p0.ssl.qhimg.com/t0177f583632427bf95.png" alt="授予项目访问权限"></p>
+<p>3、前往 GitHub 的 <a href="https://github.com/settings/installations">Applications settings</a>，配置 Travis CI 权限，使其能够访问你的 repository。若你在第2步忘记了设置 <code>Travis CI</code> 的仓库权限，也可在此重新配置。</p>
+<p><img src="https://p5.ssl.qhimg.com/t01a8332cda870c3db1.png" alt="配置 Travis CI 权限"></p>
+<p><img src="https://p2.ssl.qhimg.com/t01867de50a8cd84260.png" alt="设置 Travis CI 的仓库权限"></p>
+<p>4、保存设置后你应该会被重定向到 Travis CI 的页面。如果没有，请 <span class="exturl" data-url="aHR0cHM6Ly90cmF2aXMtY2kuY29tLw==">手动前往<i class="fa fa-external-link-alt"></i></span>。<br>5、在浏览器新建一个标签页，前往 GitHub <a href="https://github.com/settings/tokens">新建 Personal Access Token</a>，只勾选 <code>repo</code> 的权限并生成一个新的 Token。Token 生成后请复制并保存好。<br><img src="https://p5.ssl.qhimg.com/t012b03686dfd70e308.png" alt="新建 Personal Access Token"><br>6、回到 Travis CI，前往你的 repository 的设置页面，在 <strong>Environment Variables</strong> 下新建一个环境变量，<strong>Name</strong> 为 <code>GH_TOKEN</code> ，<strong>Value</strong> 为刚才你在 GitHub 生成的 <strong>Token</strong>。确保 <strong>DISPLAY VALUE IN BUILD LOG</strong> 保持 <strong>不被勾选</strong> 避免你的 Token 泄漏。点击 <strong>Add</strong> 保存。<br><img src="https://p4.ssl.qhimg.com/t01d2f70045349a4ccf.png"><br>7、在你的 Hexo 站点文件夹中新建一个 .travis.yml 文件：</p>
+<figure class="highlight yml"><figcaption><span>.travis.yml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sudo:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">node_js</span></span><br><span class="line"><span class="attr">node_js:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">10</span> <span class="comment"># use nodejs v10 LTS</span></span><br><span class="line"><span class="attr">cache:</span> <span class="string">npm</span></span><br><span class="line"><span class="attr">branches:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">master</span> <span class="comment"># build master branch only</span></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">hexo</span> <span class="string">generate</span> <span class="comment"># generate static files</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">provider:</span> <span class="string">pages</span></span><br><span class="line">  <span class="attr">skip-cleanup:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">github-token:</span> <span class="string">$GH_TOKEN</span></span><br><span class="line">  <span class="attr">keep-history:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">on:</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">master</span></span><br><span class="line">  <span class="attr">local-dir:</span> <span class="string">public</span></span><br></pre></td></tr></table></figure>
+
+<p>8、将 <code>.travis.yml</code> 推送到 repository 中。Travis CI 应该会自动开始运行，并将生成的文件推送到同一 repository 下的 <code>gh-pages</code> 分支下.<br>9、在 GitHub 中前往你的 repository 的设置页面，修改 <code>GitHub Pages</code> 的部署分支为 <code>gh-pages</code>。<br><img src="https://p1.ssl.qhimg.com/t01c28f4fde1a753294.png" alt="设置页面gh-pages"><br>10、前往 <code>https://&lt;你的 GitHub 用户名&gt;.github.io</code> 查看你的站点是否可以访问。这可能需要一些时间。</p>
+<p>或许你觉得这种基于 Travis CI 的部署方式配置繁琐，但你要知道一旦配置走通，后期部署都走自动化，对于团队博客而言能在一定程度上减轻心智负担。你要是真不想配置，推荐使用官方的<span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlvL2RvY3Mvb25lLWNvbW1hbmQtZGVwbG95bWVudA==">一键部署<i class="fa fa-external-link-alt"></i></span>，但这种部署方式每次都要人工执行操作。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>还是那句话，萝卜青菜个有所爱。从 Jekyll 到 Hexo，这趟旅行虽说不易，但旅途中的风景也是令人难忘。若你还有更好用的博客框架，可留言推荐给笔者和大家。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+              <a href="/tags/Github/" rel="tag"># Github</a>
+              <a href="/tags/Jekyll/" rel="tag"># Jekyll</a>
+              <a href="/tags/Travis/" rel="tag"># Travis</a>
+              <a href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag"># 博客</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/01/pick-embeddable-markdown-editor/" rel="prev" title="你想 pick 哪款嵌入式 Markdown 编辑器?">
+                  <i class="fa fa-chevron-left"></i> 你想 pick 哪款嵌入式 Markdown 编辑器?
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NexT</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">51k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">46 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.8.2/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+
+    </div>
+</body>
+</html>

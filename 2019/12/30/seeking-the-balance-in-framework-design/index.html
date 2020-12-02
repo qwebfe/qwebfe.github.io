@@ -28,7 +28,7 @@
   <meta name="description" content="今年 JSConf.Asia 会议上，Vue.js 的作者 @尤雨溪 在关于 前端框架设计取舍 上作了分享。 分享主要从两个部分展开介绍： 职责范围（Scope）和 渲染机制（Render Mechanism）。 职责范围小的职责范围具有很好的灵活度，但关于构建抽象上要求开发者有自主学习能力。相反，大的职责范围致力于提供抽象概念，倘若抽象不适用，想改变时，却缺乏灵活度。 Vue 在职责范围这个问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="读“在框架设计中寻求平衡”">
-<meta property="og:url" content="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/index.html">
+<meta property="og:url" content="https://github.com/qcft/2019/12/30/seeking-the-balance-in-framework-design/index.html">
 <meta property="og:site_name" content="qcft&#39;s Blog">
 <meta property="og:description" content="今年 JSConf.Asia 会议上，Vue.js 的作者 @尤雨溪 在关于 前端框架设计取舍 上作了分享。 分享主要从两个部分展开介绍： 职责范围（Scope）和 渲染机制（Render Mechanism）。 职责范围小的职责范围具有很好的灵活度，但关于构建抽象上要求开发者有自主学习能力。相反，大的职责范围致力于提供抽象概念，倘若抽象不适用，想改变时，却缺乏灵活度。 Vue 在职责范围这个问题">
 <meta property="og:locale" content="zh_CN">
@@ -42,14 +42,14 @@
 <meta property="og:image" content="https://p1.ssl.qhimg.com/t01dc325e2cba4ce2e2.png">
 <meta property="og:image" content="https://p1.ssl.qhimg.com/t015efdcb0ccb5fb4a3.png">
 <meta property="article:published_time" content="2019-12-30T00:00:00.000Z">
-<meta property="article:modified_time" content="2020-11-23T09:41:54.889Z">
+<meta property="article:modified_time" content="2020-12-02T03:51:03.285Z">
 <meta property="article:tag" content="框架设计">
 <meta property="article:tag" content="Vue">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://p1.ssl.qhimg.com/t01fe27088aa20d3ded.png">
 
 
-<link rel="canonical" href="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/">
+<link rel="canonical" href="https://github.com/qcft/2019/12/30/seeking-the-balance-in-framework-design/">
 
 
 <script data-pjax class="page-configurations">
@@ -149,17 +149,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -235,24 +235,29 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qcft/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qcft&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -289,7 +294,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/12/30/seeking-the-balance-in-framework-design/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -403,12 +408,12 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2019/10/31/2019-10-31-wechat-ci/" rel="prev" title="微信小程序工程化之持续集成方案">
+                <a href="/2019/10/31/wechat-ci/" rel="prev" title="微信小程序工程化之持续集成方案">
                   <i class="fa fa-chevron-left"></i> 微信小程序工程化之持续集成方案
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/04/23/2020-04-23-experience-about-gatsby/" rel="next" title="Gatsby 踩过的那些坑">
+                <a href="/2020/04/23/experience-about-gatsby/" rel="next" title="Gatsby 踩过的那些坑">
                   Gatsby 踩过的那些坑 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
@@ -470,14 +475,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">47k</span>
+    <span title="站点总字数">51k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">43 分钟</span>
+    <span title="站点阅读时长">46 分钟</span>
   </span>
 </div>
 

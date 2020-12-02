@@ -135,17 +135,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">13</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">2</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">9</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -220,24 +220,29 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qcft/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qcft&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
 
 
 
@@ -273,7 +278,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/04/23/2020-04-23-experience-about-gatsby/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/05/13/explain-new-characters-vue3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -287,7 +292,104 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/04/23/2020-04-23-experience-about-gatsby/" class="post-title-link" itemprop="url">Gatsby 踩过的那些坑</a>
+            <a href="/2020/05/13/explain-new-characters-vue3/" class="post-title-link" itemprop="url">解密Vue3.0的新特性</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-13 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-13T00:00:00+00:00">2020-05-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>13k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><img src="https://p1.ssl.qhimg.com/t01803ad9bd07851fc7.png"></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>尤大大早在2019年10月5日就开放了vue3的源码，时隔半年，于今年的4月17日发布了vue3.0的Beta版本，4月21日B站开直播，对vue3.0做分享总结，这一连串的操作，也算是兢兢业业，大写的优秀了。这篇文章重点来解密一下他在视频里所提及的一些新特性，包括性能方面的大幅度提升，Tree-shaking抖动，Fragments，Teleport，Suspense，自定义渲染API等，其中最重磅的莫过于Composition API了，虽然有那么点像React Hooks，但是气质上还是有很多不同的，下面会具体介绍。先附上Beta版源码地址：<a href="https://github.com/vuejs/vue-next#status-beta">https://github.com/vuejs/vue-next#status-beta</a>，供大家仔细研读。</p>
+<h1 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h1><h2 id="Virtual-Dom"><a href="#Virtual-Dom" class="headerlink" title="Virtual Dom"></a>Virtual Dom</h2><p>相信使用过前端框架React的人，对虚拟Dom应该很熟悉了。它的核心思想就是抽象原生Dom，封装对应操作的API。其中的Diff算法算是核心难点。vue3.0这次优化主要就是在Diff算法上下了很多功夫。它是怎么来实现的呢？主要通过<code>patchflag</code>来标记不同类型的数据，来实现动态数据的动态更新，区分静态数据，这样只会在最开始的时候加载一次，后续编译过程中均直接略过，从而达到提升渲染速度的目的。效果是，upadate的性能提升了1.3~2倍，开启ssr的情况下可以提升2~3倍，所以在性能方面的提升还是很可观的。我们来看下一个代码示例：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/13/explain-new-characters-vue3/" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2020/04/23/experience-about-gatsby/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qcft's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/04/23/experience-about-gatsby/" class="post-title-link" itemprop="url">Gatsby 踩过的那些坑</a>
         </h2>
 
         <div class="post-meta-container">
@@ -345,7 +447,7 @@
 <p>解决办法：</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/04/23/2020-04-23-experience-about-gatsby/#more" rel="contents">
+              <a class="btn" href="/2020/04/23/experience-about-gatsby/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -376,7 +478,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/12/30/seeking-the-balance-in-framework-design/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -390,7 +492,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/" class="post-title-link" itemprop="url">读“在框架设计中寻求平衡”</a>
+            <a href="/2019/12/30/seeking-the-balance-in-framework-design/" class="post-title-link" itemprop="url">读“在框架设计中寻求平衡”</a>
         </h2>
 
         <div class="post-meta-container">
@@ -445,7 +547,7 @@
 <p>这种渐进式一来让 Vue 也存在着大职责范围中的统一维护面问题；二来 Vue 生态也无法像小职责范围那样的多样化。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/12/30/2019-12-30-seeking-the-balance-in-framework-design/#more" rel="contents">
+              <a class="btn" href="/2019/12/30/seeking-the-balance-in-framework-design/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -476,7 +578,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/10/31/2019-10-31-wechat-ci/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/10/31/wechat-ci/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -490,7 +592,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/10/31/2019-10-31-wechat-ci/" class="post-title-link" itemprop="url">微信小程序工程化之持续集成方案</a>
+            <a href="/2019/10/31/wechat-ci/" class="post-title-link" itemprop="url">微信小程序工程化之持续集成方案</a>
         </h2>
 
         <div class="post-meta-container">
@@ -546,111 +648,7 @@
 <h1 id="什么是持续集成"><a href="#什么是持续集成" class="headerlink" title="什么是持续集成"></a>什么是持续集成</h1><p>持续集成是前端工程化中的一部分，是一种软件开发实践，即团队开发成员经常集成他们的工作，通常每个成员每天至少集成一次，也就意味着每天可能会发生多次集成。每次集成都通过自动化的构建（包括自动化编译，自动化测试，自动化发布）来验证项目代码，从而尽早地发现错误。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/10/31/2019-10-31-wechat-ci/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/08/29/2019-08-29-web-authentication-time/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/logo.svg">
-      <meta itemprop="name" content="">
-      <meta itemprop="description" content="Stay hungry, Stay foolish">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qcft's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/08/29/2019-08-29-web-authentication-time/" class="post-title-link" itemprop="url">WEB验证的过去现在与未来</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-29 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-29T00:00:00+00:00">2019-08-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="https://p1.ssl.qhimg.com/t0159cbba79e1dd5740.png"></p>
-<blockquote>
-<p>本文作者：韩永刚，360奇舞团 前端开发工程师。</p>
-</blockquote>
-<p>本文将以时间维度介绍一些目前常见的Web验证方法以及相关协议，带你了解Web验证的过去、现在与未来。</p>
-<h2 id="传统身份验证方式"><a href="#传统身份验证方式" class="headerlink" title="传统身份验证方式"></a>传统身份验证方式</h2><p><img src="https://p1.ssl.qhimg.com/t01e5be0ec30c7e5009.jpg"></p>
-<h3 id="过去普遍的做法可能是这样的"><a href="#过去普遍的做法可能是这样的" class="headerlink" title="过去普遍的做法可能是这样的"></a>过去普遍的做法可能是这样的</h3><h4 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h4><ul>
-<li><p>前端注册页面填写用户名和密码表单，发送给后台服务器</p>
-</li>
-<li><p>后台服务器将接收到的用户名和密码进行加密并插入到数据库，然后回馈是否成功的信息给前端页面。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/08/29/2019-08-29-web-authentication-time/#more" rel="contents">
+              <a class="btn" href="/2019/10/31/wechat-ci/" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -729,14 +727,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">47k</span>
+    <span title="站点总字数">51k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">43 分钟</span>
+    <span title="站点阅读时长">46 分钟</span>
   </span>
 </div>
 
