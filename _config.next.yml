@@ -53,15 +53,15 @@ avatar:
   url: /images/logo.svg
   rounded: true
 
-# social:
-  # GitHub: https://github.com/qcft/ || fab fa-github
+social:
+  GitHub: https://github.com/qcft/ || fab fa-github
   # E-Mail: mailto:support@theme-next.org || fa fa-envelope
   # RSS: /atom.xml || fa fa-rss
   # Gitter: https://gitter.im/hexo-next || fab fa-gitter
 
 social_icons:
   enable: true
-  icons_only: true
+  icons_only: false
   transition: true
 
 toc:
@@ -101,7 +101,9 @@ post_edit:
   enable: true
   url: https://github.com/qcft/qcft.github.io/edit/master/source/
 
+excerpt_description: true
 
+scroll_to_more: false
 # ============================================================= #
 # ==================== Misc Theme Settings ==================== #
 # ============================================================= #
