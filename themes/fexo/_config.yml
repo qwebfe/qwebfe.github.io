@@ -1,7 +1,7 @@
 # Blog info
-blog_name: qcft
+blog_name: qwebfe
 slogan: Find the bug of the world
-url: https://qcft.github.io/
+url: https://qwebfe.github.io/
 
 # Set avatar (Absolute url and relative url)
 avatar: /images/avatar.jpg
@@ -20,7 +20,7 @@ home_nav:
   #   url: /project/
   #   target_blank: true #在新页面打开
   - name: Github
-    url: https://github.com/qcft
+    url: https://github.com/qwebfe
     target_blank: true
   # - name: Twitter
   #   url: https://twitter.com/forsigner
@@ -201,7 +201,7 @@ about:
     icon: icon-github
     text_key: Github
     text_value: "@forsigner"
-    text_value_url: https://github.com/qcft
+    text_value_url: https://github.com/qwebfe
   - type: weibo
     icon: icon-weibo
     text_key: 微博

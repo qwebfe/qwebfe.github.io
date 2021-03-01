@@ -32,7 +32,7 @@ tags:
 1. 首先，[注册Github帐号](https://github.com/join)。
 ![注册Github帐号](https://p1.ssl.qhimg.com/t01b00009360875756d.png)
 2. 然后，将代码托管在 Github 上。
-新建一个 repository。如果你希望你的站点能通过 <你的 GitHub 用户名>.github.io 域名访问，你的 repository 应该直接命名为 <你的 GitHub 用户名>.github.io。例如，`qcft.github.io`。
+新建一个 repository。如果你希望你的站点能通过 <你的 GitHub 用户名>.github.io 域名访问，你的 repository 应该直接命名为 <你的 GitHub 用户名>.github.io。例如，`qwebfe.github.io`。
 3. 最后配置 Github Pages，具体细节详见 [Getting Started with GitHub Pages](https://guides.github.com/features/pages/)。
 
 

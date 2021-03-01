@@ -8,7 +8,7 @@ tags:
   - Vue
 copyright: 
   author: 本文作者： mileOfSunshine
-  link: 本文链接： https://qcft.github.io/2019/12/30/2019-12-30-seeking-the-balance-in-framework-desig
+  link: 本文链接： https://qwebfe.github.io/2019/12/30/2019-12-30-seeking-the-balance-in-framework-desig
   license_title: 版权声明：文章是原创作品。转载请注明出处！
 ---
 
