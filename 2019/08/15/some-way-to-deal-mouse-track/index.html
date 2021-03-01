@@ -28,21 +28,21 @@
   <meta name="description" content="需求背景为了统计分析用户页面行为，我们经常需要收集鼠标在页面上的各类操作，如页面中按钮和链接的点击和统计较准确的访客页面停留时间。而本文主要记录在解决分别记录鼠标在页面各个区域的停留时间总和这一问题的技术方案的尝试。 简化问题描述：将浏览器的可视窗口平均分为2 × 2的4份， 如图。分别记录鼠标在各个区域的停留时间总和，当然，不能影响页面的正常功能的使用。  当鼠标进入某块区域时开始计时， 移出">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记Mousetarck的一些技术尝试">
-<meta property="og:url" content="https://github.com/qcft/2019/08/15/some-way-to-deal-mouse-track/index.html">
-<meta property="og:site_name" content="qcft&#39;s Blog">
+<meta property="og:url" content="https://github.com/qwebfe/2019/08/15/some-way-to-deal-mouse-track/index.html">
+<meta property="og:site_name" content="qwebfe&#39;s Blog">
 <meta property="og:description" content="需求背景为了统计分析用户页面行为，我们经常需要收集鼠标在页面上的各类操作，如页面中按钮和链接的点击和统计较准确的访客页面停留时间。而本文主要记录在解决分别记录鼠标在页面各个区域的停留时间总和这一问题的技术方案的尝试。 简化问题描述：将浏览器的可视窗口平均分为2 × 2的4份， 如图。分别记录鼠标在各个区域的停留时间总和，当然，不能影响页面的正常功能的使用。  当鼠标进入某块区域时开始计时， 移出">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://p5.ssl.qhimg.com/t01771478e667255d55.png">
 <meta property="og:image" content="https://p5.ssl.qhimg.com/t01752acf18ecbe6aa7.png">
 <meta property="article:published_time" content="2019-08-15T00:00:00.000Z">
-<meta property="article:modified_time" content="2020-12-02T03:51:03.285Z">
+<meta property="article:modified_time" content="2021-03-01T09:40:23.609Z">
 <meta property="article:tag" content="Javascript">
 <meta property="article:tag" content="Mousetarck">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://p5.ssl.qhimg.com/t01771478e667255d55.png">
 
 
-<link rel="canonical" href="https://github.com/qcft/2019/08/15/some-way-to-deal-mouse-track/">
+<link rel="canonical" href="https://github.com/qwebfe/2019/08/15/some-way-to-deal-mouse-track/">
 
 
 <script data-pjax class="page-configurations">
@@ -55,7 +55,7 @@
   };
 </script>
 
-  <title>记Mousetarck的一些技术尝试 | qcft's Blog</title>
+  <title>记Mousetarck的一些技术尝试 | qwebfe's Blog</title>
   
 
 
@@ -118,10 +118,10 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">qcft's Blog</h1>
+      <h1 class="site-title">qwebfe's Blog</h1>
       <i class="logo-line"></i>
     </a>
-      <p class="site-subtitle" itemprop="description">奇舞团商业化前端组</p>
+      <p class="site-subtitle" itemprop="description">奇舞团互联网前端</p>
   </div>
 
   <div class="site-nav-right">
@@ -248,7 +248,7 @@
 </div>
   <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/qcft/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qcft&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/qwebfe/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qwebfe&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
   </div>
 
@@ -287,7 +287,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://github.com/qcft/2019/08/15/some-way-to-deal-mouse-track/">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qwebfe/2019/08/15/some-way-to-deal-mouse-track/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.svg">
@@ -296,11 +296,11 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="qcft's Blog">
+      <meta itemprop="name" content="qwebfe's Blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          记Mousetarck的一些技术尝试<a href="https://github.com/qcft/qcft.github.io/edit/master/source/_posts/2019-08-15-some-way-to-deal-mouse-track.markdown" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+          记Mousetarck的一些技术尝试<a href="https://github.com/qwebfe/qwebfe.github.io/edit/master/source/_posts/2019-08-15-some-way-to-deal-mouse-track.markdown" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
         </h1>
 
         <div class="post-meta-container">
@@ -434,7 +434,7 @@
 <div class="copyright">
   
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
