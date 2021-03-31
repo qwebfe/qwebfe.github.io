@@ -3,6 +3,7 @@ layout: post
 title: 手把手教你搭建一个基于 sourcegraph 代码搜索网站
 date: 2021-03-26
 categories: 教程
+coauthor: mileOfSunshine
 tags:
   - Sourcegraph
   - Github
@@ -253,3 +254,8 @@ sourcegraph 提供了多种仓库供你选择。笔者选择了自己接触最�
 - 免费版的 Sourcegraph 只能注册10个用户哦！
 
 - 升级应该在 Sourcegraph 的连续次要版本之间进行。例如，如果您正在运行Sourcegraph 3.1，并且想要升级到3.3，则应该先升级到3.2，再升级到3.3。
+
+
+> 本文作者： mileOfSunshine
+> 本文链接： https://qwebfe.github.io/2021/03/26/about-sourcegraph/
+> 版权声明：文章是原创作品。转载请注明出处！

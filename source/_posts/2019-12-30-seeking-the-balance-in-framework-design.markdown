@@ -6,10 +6,7 @@ categories: 阅读
 tags:
   - 框架设计
   - Vue
-copyright: 
-  author: 本文作者： mileOfSunshine
-  link: 本文链接： https://qwebfe.github.io/2019/12/30/2019-12-30-seeking-the-balance-in-framework-desig
-  license_title: 版权声明：文章是原创作品。转载请注明出处！
+coauthor: mileOfSunshine
 ---
 
 
@@ -88,3 +85,8 @@ B1: [B2, B3]
 最后，我们回到本次分享中的话题。通过 @尤雨溪 的分享，我们能感受到他在框架设计中是如何寻求平衡的，这对我们今后的框架设计存在着许多借鉴意义。
 
 如何获取一个最佳平衡点，我们都曾有过努力寻找最佳的方式来解决问题的经历，我想这就是一个寻求最佳平衡点的过程。这个最佳方式不仅能解决现有问题，并且与后期的发展也一致，在我看来，这应该就是最佳平衡点。
+
+
+> 本文作者： mileOfSunshine
+> 本文链接： https://qwebfe.github.io/2019/12/30/seeking-the-balance-in-framework-design/
+> 版权声明：文章是原创作品。转载请注明出处！

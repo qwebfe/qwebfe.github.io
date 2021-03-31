@@ -1,0 +1,8 @@
+default:
+  coauthor: 作者
+en:
+  coauthor: Coauthor
+zh-CN:
+  coauthor: 作者
+zh-TW:
+  coauthor: 作者

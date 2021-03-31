@@ -4,6 +4,7 @@ title: webpack 那些事儿
 date: 2020-05-25
 categories: 前端 
 tag: webpack
+coauthor: LuChunYu
 ---
 
 最近看了些webpack相关的视频，对webpack有了进一步的学习，这里做了些总结，可能不全面、片面，欢迎大家指出，一起学习讨论。

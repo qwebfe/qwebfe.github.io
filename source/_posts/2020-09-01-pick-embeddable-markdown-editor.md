@@ -3,6 +3,7 @@ layout: post
 title: 你想 pick 哪款嵌入式 Markdown 编辑器?
 date: 2020-09-01
 categories: 前端 
+coauthor: mileOfSunshine
 tags: 
   - Markdown
   - 编辑器
@@ -179,3 +180,6 @@ export default function App() {
 
 推荐了这么多款，总有一款适合你，快点来Pick吧！！！
 
+> 本文作者： mileOfSunshine
+> 本文链接： https://qwebfe.github.io/2020/09/01/pick-embeddable-markdown-editor/
+> 版权声明：文章是原创作品。转载请注明出处！

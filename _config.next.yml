@@ -208,3 +208,20 @@ motion:
 
 vendors:
   internal: jsdelivr
+
+# 文章作者信息
+coauthors: 
+  [mileOfSunshine]:
+    link: https://github.com/mileOfSunshine
+  [sunlei33]:
+    link: https://github.com/sunlei33
+  [hanyonggang]: 
+    link: https://github.com/hanyonggang
+  [zhangxiang93]:
+    link: https://github.com/zhangxiang93
+  [D-lyw]: 
+    link: https://github.com/D-lyw
+  [LemonGirl]:
+    link: https://github.com/LemonGirl
+  [LuChunYu]:
+    link: https://github.com/LuChunYu
