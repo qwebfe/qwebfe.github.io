@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="5AUIVYTbHIAuz-eQtxSfZbWW5eg9_EVZMSQycIuXrG0">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/","scheme":"Gemini","version":"8.0.2","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":true,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="现有企业的代码一般都是托管在 GitLab 上，其理由，无非是免费、可以部署到自己的服务器上，所有信息都掌握在自己手中，非常适合团队内部协作。而 Github 虽也致力于免费托管开源代码，但如需建立私有仓库就需付费，看到付费两字，很多人都望而却步。但在代码搜索方面，Github 做的比 GitLab 精彩。 如何弥补 GitLab 在智能搜索方面的缺憾呢，笔者想推荐个工具给你 ——— Source">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手把手教你搭建一个基于 sourcegraph 代码搜索网站">
+<meta property="og:url" content="https://github.com/qwebfe/2021/03/26/about-sourcegraph/index.html">
+<meta property="og:site_name" content="qwebfe&#39;s Blog">
+<meta property="og:description" content="现有企业的代码一般都是托管在 GitLab 上，其理由，无非是免费、可以部署到自己的服务器上，所有信息都掌握在自己手中，非常适合团队内部协作。而 Github 虽也致力于免费托管开源代码，但如需建立私有仓库就需付费，看到付费两字，很多人都望而却步。但在代码搜索方面，Github 做的比 GitLab 精彩。 如何弥补 GitLab 在智能搜索方面的缺憾呢，笔者想推荐个工具给你 ——— Source">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t0139aea3fa431d9ea6.png">
+<meta property="og:image" content="https://p3.ssl.qhimg.com/t0168e932b15a6f1c98.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t011017c72c20b43768.png">
+<meta property="og:image" content="https://p4.ssl.qhimg.com/t01e985c2331e5932ea.png">
+<meta property="og:image" content="https://p5.ssl.qhimg.com/t012dfa80c5385b4daa.png">
+<meta property="og:image" content="https://p0.ssl.qhimg.com/t01fe2400ac3070f849.png">
+<meta property="og:image" content="https://p2.ssl.qhimg.com/t016bab50fbb17519d9.png">
+<meta property="og:image" content="https://p4.ssl.qhimg.com/t0101a836846565dc69.png">
+<meta property="article:published_time" content="2021-03-26T00:00:00.000Z">
+<meta property="article:modified_time" content="2021-03-31T10:26:43.228Z">
+<meta property="article:tag" content="Github">
+<meta property="article:tag" content="Sourcegraph">
+<meta property="article:tag" content="GitLab">
+<meta property="article:tag" content="授权登录">
+<meta property="article:tag" content="智能搜索">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p5.ssl.qhimg.com/t0139aea3fa431d9ea6.png">
+
+
+<link rel="canonical" href="https://github.com/qwebfe/2021/03/26/about-sourcegraph/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>手把手教你搭建一个基于 sourcegraph 代码搜索网站 | qwebfe's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">qwebfe's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">奇舞团互联网前端</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%9B%A0%EF%B8%8F%E5%AE%89%E8%A3%85-Sourcegraph"><span class="nav-number">1.</span> <span class="nav-text">🛠️安装 Sourcegraph</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9A%99%EF%B8%8F%E9%85%8D%E7%BD%AE-Sourcegraph-%E7%BD%91%E7%AB%99"><span class="nav-number">2.</span> <span class="nav-text">⚙️配置 Sourcegraph 网站</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%93%E5%BA%93%E8%AE%BE%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">仓库设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Github-%E4%BB%93%E5%BA%93"><span class="nav-number">2.1.1.</span> <span class="nav-text">配置 Github 仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Gitlab-%E4%BB%93%E5%BA%93"><span class="nav-number">2.1.2.</span> <span class="nav-text">配置 Gitlab 仓库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%8E%88%E6%9D%83"><span class="nav-number">2.2.</span> <span class="nav-text">用户授权</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GitLab-%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">GitLab 授权登录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Github-%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">Github 授权登录</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%E2%9D%A4%EF%B8%8F"><span class="nav-number">3.</span> <span class="nav-text">小结❤️</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt=""
+      src="/images/logo.svg">
+  <p class="site-author-name" itemprop="name"></p>
+  <div class="site-description" itemprop="description">Stay hungry, Stay foolish</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/qwebfe/" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;qwebfe&#x2F;"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://github.com/qwebfe/2021/03/26/about-sourcegraph/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.svg">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="Stay hungry, Stay foolish">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="qwebfe's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          手把手教你搭建一个基于 sourcegraph 代码搜索网站<a href="https://github.com/qwebfe/qwebfe.github.io/edit/master/source/_posts/2021-03-26-about-sourcegraph.md" class="post-edit-link" title="编辑"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-26 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-26T00:00:00+00:00">2021-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">教程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>现有企业的代码一般都是托管在 GitLab 上，其理由，无非是免费、可以部署到自己的服务器上，所有信息都掌握在自己手中，非常适合团队内部协作。而 Github 虽也致力于免费托管开源代码，但如需建立私有仓库就需付费，看到付费两字，很多人都望而却步。但在代码搜索方面，Github 做的比 GitLab 精彩。</p>
+<p>如何弥补 GitLab 在智能搜索方面的缺憾呢，笔者想推荐个工具给你 ——— <span class="exturl" data-url="aHR0cHM6Ly9hYm91dC5zb3VyY2VncmFwaC5jb20vZ2V0LXN0YXJ0ZWQ=">Sourcegraph<i class="fa fa-external-link-alt"></i></span>，一款开源的代码搜索浏览工具。检索速度也是毫秒级的。</p>
+<p>如何搭建呢？你听我娓娓道来。🥰</p>
+<p><img src="https://p5.ssl.qhimg.com/t0139aea3fa431d9ea6.png"></p>
+<a id="more"></a>
+
+<blockquote>
+<p>💡小贴士：<br>本文是在以下环境中进行实践的。</p>
+<p>操作系统：Linux<br>环境要求：安装了 docker</p>
+</blockquote>
+<h2 id="🛠️安装-Sourcegraph"><a href="#🛠️安装-Sourcegraph" class="headerlink" title="🛠️安装 Sourcegraph"></a>🛠️安装 Sourcegraph</h2><p>目前官方就提供了一个使用 Docker 安装的示例，命令也是相当简短：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --publish 7080:7080 --publish 127.0.0.1:3370:3370 --rm --volume ~/.sourcegraph/config:/etc/sourcegraph --volume ~/.sourcegraph/data:/var/opt/sourcegraph sourcegraph/server:3.26.0</span><br></pre></td></tr></table></figure>
+
+<p>笔者将其进行了优化处理，为容器指定了个名称，更换了两个本机端口，以后台模式启动容器，方便后续说明。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line"> --name sgdev2 \</span><br><span class="line"> --publish 27080:7080 \</span><br><span class="line"> --publish 127.0.0.1:23370:3370 \</span><br><span class="line"> --rm \</span><br><span class="line"> --volume ~/.sourcegraph/config:/etc/sourcegraph \</span><br><span class="line"> --volume ~/.sourcegraph/data:/var/opt/sourcegraph \</span><br><span class="line"> sourcegraph/server:3.26.0</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Usage：<code>docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</code> 创建一个新的容器并运行一个命令</p>
+</blockquote>
+<ul>
+<li><code>-d/--detach</code>：后台模式启动一个容器</li>
+<li><code>--name</code>：为容器指定一个名称</li>
+<li><code>--rm</code>：退出时自动移除容器</li>
+<li><code>-p/--publish</code>：指定端口映射，格式为：主机(宿主)端口:容器端口。关于端口映射的具体说明，可参考文章<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI5OTk0NjA5L2FydGljbGUvZGV0YWlscy81MTczMDY0MA==">Docker端口映射<i class="fa fa-external-link-alt"></i></span>。官方示例中就是将本机的两个端口7080和3370映射到容器的端口7080和3370上，若是本机端口7080和3370被占用，也可更改为未占用的端口号，例如27080和23370，就如笔者优化后的示例。</li>
+<li><code>-v/--volume</code>：指定容器卷。上面的命令指定了两个卷，即在本机创建数据卷 <code>~/.sourcegraph/config</code>（配置） 和 <code>~/.sourcegraph/data</code>（数据）（题外话，可以改成任何你想放置的位置，例如：<code>~/.sourcegraph2/config</code>、<code>~/.sourcegraph2/data</code>），分别挂载到容器的 <code>/etc/sourcegraph</code> 和 <code>/var/opt/sourcegraph</code> 路径上。这样容器运行过程中，在容器中生产的数据会被保存到容器所在的节点上（<code>~/.sourcegraph/config</code> 和 <code>~/.sourcegraph/data</code>）。</li>
+</ul>
+<p>若你不设置 <code>-d</code>，执行成功后，会出现以下提示，让你访问 <code>http://127.0.0.1:7080</code>，但上述命令我们已经将 7080 映射到 27080 端口。故正确的访问地址是 <code>http://127.0.0.1:27080</code>。</p>
+<p><img src="https://p3.ssl.qhimg.com/t0168e932b15a6f1c98.png"></p>
+<p>若你是在服务器上执行 docker 命令，那我们还需进行 nginx 配置才能访问。</p>
+<figure class="highlight plain"><figcaption><span>nginx.conf</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  listen 80;</span><br><span class="line">  server_name sgdev2.example.com;</span><br><span class="line"></span><br><span class="line">  location &#x2F; &#123;</span><br><span class="line">    proxy_pass http:&#x2F;&#x2F;127.0.0.1:27080;</span><br><span class="line">    proxy_set_header X-Real-IP  $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改完配置，我们需重启下nginx <code>/usr/sbin/nginx -s reload</code>（没权限就加sudo）。接着在客户端上配置下 hosts，假设服务器IP为 <code>10.11.xx.xx</code>，配置完后直接访问 <code>http://sgdev2.example.com</code>。出现如下界面就成功了，第一次访问页面注册的是管理员，注册完登录就可以进行站点设置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10.11.xx.xx sgdev2.example.com</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://p5.ssl.qhimg.com/t011017c72c20b43768.png"></p>
+<blockquote>
+<p>💡docker 小贴士：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># sgdev2 为容器名</span></span><br><span class="line"></span><br><span class="line">docker ps <span class="comment"># 查看运行中的容器</span></span><br><span class="line"></span><br><span class="line">docker restart sgdev2 <span class="comment"># 重启容器 sgdev2</span></span><br><span class="line"></span><br><span class="line">docker start sgdev2 <span class="comment"># 启动容器 sgdev2</span></span><br><span class="line"></span><br><span class="line">docker stop sgdev2 <span class="comment"># 停止运行中的容器 sgdev2</span></span><br><span class="line"></span><br><span class="line">docker <span class="built_in">kill</span> -s KILL sgdev2 <span class="comment"># 杀掉一个运行中的容器</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="⚙️配置-Sourcegraph-网站"><a href="#⚙️配置-Sourcegraph-网站" class="headerlink" title="⚙️配置 Sourcegraph 网站"></a>⚙️配置 Sourcegraph 网站</h2><h3 id="仓库设置"><a href="#仓库设置" class="headerlink" title="仓库设置"></a>仓库设置</h3><p>入口：<code>Site admin</code> &gt; <code>Repositories</code> &gt; <code>Manage code hosts</code></p>
+<p>sourcegraph 提供了多种仓库供你选择。笔者选择了自己接触最多的 Github 和 GitLab 分别进行配置、解说。</p>
+<p><img src="https://p4.ssl.qhimg.com/t01e985c2331e5932ea.png"></p>
+<h4 id="配置-Github-仓库"><a href="#配置-Github-仓库" class="headerlink" title="配置 Github 仓库"></a>配置 Github 仓库</h4><p>点击 Github，进入仓库配置页面：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://github.com&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;token&quot;</span>: <span class="string">&quot;&lt;access token&gt;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;orgs&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;&lt;你的github用户名&gt;&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;access token&gt;</code> 生成步骤详见 <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLmdpdGh1Yi5jb20vZW4vZ2l0aHViL2F1dGhlbnRpY2F0aW5nLXRvLWdpdGh1Yi9jcmVhdGluZy1hLXBlcnNvbmFsLWFjY2Vzcy10b2tlbg==">Create a GitHub access token<i class="fa fa-external-link-alt"></i></span>，授权范围（scope）设置为 <strong>repo</strong>。</p>
+<p>设置成功后，点击 <code>Repositories</code> &gt; <code>Repository status</code> 就能查看到所有授权的仓库。开发者可根据需要重复上述操作即可。</p>
+<h4 id="配置-Gitlab-仓库"><a href="#配置-Gitlab-仓库" class="headerlink" title="配置 Gitlab 仓库"></a>配置 Gitlab 仓库</h4><p>点击 GitLab，进入仓库配置页面：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://&lt;你的gitlab域名&gt;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;token&quot;</span>: <span class="string">&quot;&lt;access token&gt;&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;projectQuery&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;projects?membership=true&amp;archived=no&quot;</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>&lt;access token&gt;</code> 生成步骤详见 <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vZWUvdXNlci9wcm9maWxlL3BlcnNvbmFsX2FjY2Vzc190b2tlbnMuaHRtbCNjcmVhdGluZy1hLXBlcnNvbmFsLWFjY2Vzcy10b2tlbg==">Create a GitLab access token<i class="fa fa-external-link-alt"></i></span>，授权范围（scope）设置为 <strong>api</strong></p>
+<blockquote>
+<p>若你配置了 GitLab 授权登录（下文即将介绍），希望<strong>查找的仓库权限能跟授权账号走</strong>。可以在仓库配置中加入 <code>Enforce permissions (OAuth)</code></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;authorization&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;identityProvider&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;oauth&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="用户授权"><a href="#用户授权" class="headerlink" title="用户授权"></a>用户授权</h3><p>入口：<code>Site admin</code> &gt; <code>Configuration</code> &gt; <code>Site configuration</code></p>
+<p>进入配置页，我们可以看到默认认证方式是用户注册登录，管理员可以直接在后台添加用户，此外网站还支持 GitLab / Github 授权登录。接下来笔者着重对这两种授权方式展开说明。</p>
+<h4 id="GitLab-授权登录"><a href="#GitLab-授权登录" class="headerlink" title="GitLab 授权登录"></a>GitLab 授权登录</h4><p>首先，创建一个 <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vZWUvaW50ZWdyYXRpb24vb2F1dGhfcHJvdmlkZXIuaHRtbA==">GitLab 授权应用程序<i class="fa fa-external-link-alt"></i></span>。</p>
+<blockquote>
+<p>💡小贴士：</p>
+<ol>
+<li>在 GitLab 右上角选择你的头像</li>
+<li>选择 <strong>Settings</strong> （或是 <strong>Edit profile</strong>）</li>
+<li>在左侧边栏选择 <strong>Applications</strong></li>
+<li>输入 <strong>Name</strong>，<strong>Redirect URI</strong>，<strong>Scopes</strong>(授权范围设置为<code>api</code>、<code>read_user</code>)。<strong>Redirect URI</strong>是用户授权回调的地址，形如：<code>http://sgdev2.example.com/.auth/gitlab/callback</code></li>
+<li>点击保存，就能看到 <code>Application ID</code> 和 <code>Secret</code>。</li>
+</ol>
+</blockquote>
+<p><img src="https://p5.ssl.qhimg.com/t012dfa80c5385b4daa.png"></p>
+<p>然后，回到 sourcegraph 网站站点进行配置。</p>
+<blockquote>
+<p>💡小贴士：</p>
+<ol>
+<li>在你的 sourcegraph 站点的右上角选择你的头像</li>
+<li>选择 <strong>Site admin</strong></li>
+<li>在左侧边栏选择 <strong>Site configuration</strong></li>
+<li>点击 <strong>Add GitLab sign-in</strong>，会自动添加如下授权代码。</li>
+</ol>
+</blockquote>
+<figure class="highlight json"><figcaption><span>Site configuration</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;auth.providers&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// See https://docs.sourcegraph.com/admin/auth#gitlab for instructions</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;gitlab&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;displayName&quot;</span>: <span class="string">&quot;GitLab&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;&lt;GitLab URL&gt;&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;clientID&quot;</span>: <span class="string">&quot;&lt;client ID&gt;&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;clientSecret&quot;</span>: <span class="string">&quot;&lt;client secret&gt;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>type</code> 和 <code>displayName</code> 保持默认。<code>&lt;GitLab URL&gt;</code> 改为你的 GitLab 地址，<code>&lt;client ID&gt;</code> 改为之前获得的 <code>Application ID</code>，<code>&lt;client secret&gt;</code> 改为 <code>Secret</code>，保存即可。</p>
+<p>此时你退出，再登录就会出现，GitLab 授权按钮。</p>
+<p><img src="https://p0.ssl.qhimg.com/t01fe2400ac3070f849.png"></p>
+<h4 id="Github-授权登录"><a href="#Github-授权登录" class="headerlink" title="Github 授权登录"></a>Github 授权登录</h4><p>与 GitLab 授权登录类似，先创建一个<span class="exturl" data-url="aHR0cHM6Ly9kZXZlbG9wZXIuZ2l0aHViLmNvbS9hcHBzL2J1aWxkaW5nLW9hdXRoLWFwcHMvY3JlYXRpbmctYW4tb2F1dGgtYXBwLw==">Github 授权应用程序<i class="fa fa-external-link-alt"></i></span></p>
+<blockquote>
+<p>💡小贴士：</p>
+<ol>
+<li>在 Github 右上角选择你的头像</li>
+<li>选择 <strong>Settings</strong></li>
+<li>在左侧边栏选择 <strong>Developer settings</strong></li>
+<li>在左侧边栏选择 <code>OAuth Apps</code>，点击 <code>Register a new application</code></li>
+<li>输入 <strong>Application Name</strong>, <strong>Homepage URL</strong>，<strong>Authorization callback URL</strong>是用户授权回调的地址，形如：<code>http://sgdev2.example.com/.auth/github/callback</code></li>
+<li>点击 <code>Register application</code>，就能看到 <code>Client ID</code> 和 <code>Client secret</code>。</li>
+</ol>
+</blockquote>
+<p><img src="https://p2.ssl.qhimg.com/t016bab50fbb17519d9.png"></p>
+<p><img src="https://p4.ssl.qhimg.com/t0101a836846565dc69.png"></p>
+<p>同样，回到我们的 sourcegraph 配置页。点击 <strong>Add Github sign-in</strong>，会自动添加如下授权代码：</p>
+<figure class="highlight json"><figcaption><span>Site configuration</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;auth.providers&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// See https://docs.sourcegraph.com/admin/auth#github for instructions</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;github&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;displayName&quot;</span>: <span class="string">&quot;GitHub&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;url&quot;</span>: <span class="string">&quot;https://github.com/&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;allowSignup&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">      <span class="attr">&quot;clientID&quot;</span>: <span class="string">&quot;&lt;client ID&gt;&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;clientSecret&quot;</span>: <span class="string">&quot;&lt;client secret&gt;&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>type</code> 和 <code>displayName</code> 保持默认。<code>url</code> 改为你的 Github 地址，<code>&lt;client ID&gt;</code> 改为之前获得的 <code>Client ID</code>，<code>&lt;client secret&gt;</code> 改为 <code>Client secret</code>，保存即可。</p>
+<h2 id="小结❤️"><a href="#小结❤️" class="headerlink" title="小结❤️"></a>小结❤️</h2><p>按理安装完 Sourcegraph，进行仓库配置后，站点就能正常投入使用了。关于用户授权，是笔者经历一番探索的总结，为有此需求的人在阅读官方文档中即将陷入迷茫提供的一个提示。</p>
+<p>温馨提示：</p>
+<ul>
+<li><p>若是你通过 GitLab 授权管理用户，需确保网站管理员为代码仓库的管理员，这样能保证用户的搜索池全面。</p>
+</li>
+<li><p>免费版的 Sourcegraph 只能注册10个用户哦！</p>
+</li>
+<li><p>升级应该在 Sourcegraph 的连续次要版本之间进行。例如，如果您正在运行Sourcegraph 3.1，并且想要升级到3.3，则应该先升级到3.2，再升级到3.3。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Github/" rel="tag"># Github</a>
+              <a href="/tags/Sourcegraph/" rel="tag"># Sourcegraph</a>
+              <a href="/tags/GitLab/" rel="tag"># GitLab</a>
+              <a href="/tags/%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95/" rel="tag"># 授权登录</a>
+              <a href="/tags/%E6%99%BA%E8%83%BD%E6%90%9C%E7%B4%A2/" rel="tag"># 智能搜索</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/26/build-hexo-blog/" rel="prev" title="博客之旅：从 Jekyll 到 Hexo">
+                  <i class="fa fa-chevron-left"></i> 博客之旅：从 Jekyll 到 Hexo
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">NexT</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">56k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">51 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/utils.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/motion.js"></script><script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.2/source/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.8.2/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+
+  
+
+    </div>
+</body>
+</html>
