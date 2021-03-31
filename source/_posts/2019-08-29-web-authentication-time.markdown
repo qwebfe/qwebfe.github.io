@@ -6,6 +6,7 @@ categories: 前端
 tags:
   - Javascript
   - WEB验证
+coauthor: hanyonggang
 ---
 
 ![](https://p1.ssl.qhimg.com/t0159cbba79e1dd5740.png)

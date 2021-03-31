@@ -3,6 +3,7 @@ layout: post
 title: 博客之旅：从 Jekyll 到 Hexo
 date: 2020-11-26
 categories: 教程 
+coauthor: mileOfSunshine
 tags:
   - Hexo
   - Github
@@ -208,3 +209,7 @@ deploy:
 # 后记
 
 还是那句话，萝卜青菜个有所爱。从 Jekyll 到 Hexo，这趟旅行虽说不易，但旅途中的风景也是令人难忘。若你还有更好用的博客框架，可留言推荐给笔者和大家。
+
+> 本文作者： mileOfSunshine
+> 本文链接： https://qwebfe.github.io/2020/11/26/build-hexo-blog/
+> 版权声明：文章是原创作品。转载请注明出处！

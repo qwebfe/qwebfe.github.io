@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "hexo-generator-searchdb": "^1.3.3",
+    "hexo-next-coauthor": "theme-next/hexo-next-coauthor",
     "hexo-word-counter": "0.0.2"
   }
 }
